@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="upcoming-matches.css" />
   <link rel="stylesheet" href="completed-match-colors.css" />
   <link rel="stylesheet" href="best-five.css" />
+  <link rel="stylesheet" href="comparator.css" />
   <link rel="stylesheet" href="legal-pages.css" />
   <link rel="stylesheet" href="multi-league.css" />
 </head>
@@ -81,7 +82,7 @@
         <span class="league-ball" aria-hidden="true">👥</span>
       </header>
       <div class="section-heading"><div><p class="eyebrow" data-i18n="squad">L'EFFECTIF</p><h2 data-i18n="thePlayers">Les joueurs</h2></div><div class="player-heading-actions"><div class="view-toggle" id="playerViewToggle" aria-label="Affichage des joueurs"><button class="active" type="button" data-layout="cards" aria-label="Affichage en cartes" title="Cartes">▦</button><button type="button" data-layout="list" aria-label="Affichage en liste" title="Liste">☰</button></div><button class="primary" id="addPlayerBtn" data-i18n="addPlayer">+ Joueur</button></div></div>
-      <div class="subtabs" role="tablist" aria-label="Vues des joueurs"><button class="subtab active" type="button" data-player-view="cards" data-i18n="playerCards">Fiches joueurs</button><button class="subtab" type="button" data-player-view="analytics" data-i18n="profileAnalysis">Analyse des profils</button><button class="subtab" type="button" data-player-view="best-five">Équipe Type</button></div>
+      <div class="subtabs" role="tablist" aria-label="Vues des joueurs"><button class="subtab active" type="button" data-player-view="cards" data-i18n="playerCards">Fiches joueurs</button><button class="subtab" type="button" data-player-view="analytics" data-i18n="profileAnalysis">Analyse des profils</button><button class="subtab" type="button" data-player-view="best-five">Équipe Type</button><button class="subtab" type="button" data-player-view="compare">Comparateur</button></div>
       <div class="player-view active" id="playerCardsView"><div class="player-grid" id="playerGrid"></div></div>
       <div class="player-view" id="playerAnalyticsView">
         <div class="analytics-toolbar"><div><p class="eyebrow" data-i18n="distribution">RÉPARTITION</p><h3 data-i18n="squadProfiles">Profils de l'effectif</h3></div><label><span data-i18n="filter">Filtrer</span><select id="profileFilter"><option value="all">Tous les profils</option><option value="attaque">Attaquants</option><option value="defense">Défenseurs</option><option value="milieu">Milieux</option><option value="gardien">Gardiens</option><option value="polyvalent">Polyvalents</option></select></label></div>
@@ -93,6 +94,14 @@
           <div class="best-five-heading"><div><p class="eyebrow">L'ÉQUIPE TYPE</p><h3 id="bestFiveTitle">Le meilleur cinq</h3></div><div class="best-five-badges"><span>5 joueurs</span><strong id="bestFiveWinChance" title="Estimation face au niveau moyen de l'effectif">—</strong></div></div>
           <p class="best-five-intro">Une sélection automatique fondée en priorité sur la forme récente, les victoires, les buts et les contributions. Le profil du joueur améliore sa compatibilité avec un rôle, sans imposer un poste strict.</p>
           <div class="five-pitch" id="bestFivePitch"></div>
+        </section>
+      </div>
+      <div class="player-view" id="playerCompareView">
+        <section class="compare-section" aria-labelledby="compareTitle">
+          <div class="compare-heading"><div><p class="eyebrow">DUEL DE JOUEURS</p><h3 id="compareTitle">Qui prend l'avantage ?</h3></div><span class="compare-fair-badge">Comparaison pondérée</span></div>
+          <p class="compare-intro">Les moyennes sont ajustées selon le nombre de matchs joués et le niveau moyen de la ligue. Un joueur performant sur un seul match n'est donc pas artificiellement placé devant un joueur régulier sur toute la saison.</p>
+          <div class="compare-selectors"><label>Joueur A<select id="comparePlayerA"></select></label><span aria-hidden="true">VS</span><label>Joueur B<select id="comparePlayerB"></select></label></div>
+          <div id="playerComparison"></div>
         </section>
       </div>
     </section>

@@ -26,6 +26,10 @@ Exécute une seule fois `supabase-migration-goals.sql` dans Supabase > SQL Edito
 
 Exécute une seule fois `supabase-migration-youtube.sql` dans Supabase > SQL Editor. Cette migration ajoute uniquement un lien YouTube facultatif à chaque match et conserve tout l’historique existant. Les vidéos restent hébergées par YouTube : Supabase ne stocke que leur URL.
 
+## Conserver les pronostics initiaux
+
+Exécute une seule fois `supabase-migration-match-predictions.sql` dans Supabase > SQL Editor. Cette migration ajoute uniquement le pourcentage initial de la Team A aux matchs. La Team B est toujours le complément à 100 %. Les anciens matchs restent sans pronostic enregistré afin de ne pas fabriquer de prévision après coup.
+
 ## Ajouter les cartes FUT aux joueurs
 
 Exécute une seule fois `supabase-migration-fut-cards.sql` dans Supabase > SQL Editor. Les cartes utilisent le bucket `player-avatars` déjà configuré. Le navigateur conserve leurs proportions, les redimensionne au maximum à 700 × 900 px et les compresse en WebP autour de 200 Ko. Une seule carte est conservée par joueur.

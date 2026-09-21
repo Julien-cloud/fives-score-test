@@ -19,6 +19,7 @@ create table public.matches (
   score_a int not null default 0 check (score_a >= 0),
   score_b int not null default 0 check (score_b >= 0),
   youtube_url text,
+  prediction_a smallint check (prediction_a is null or prediction_a between 0 and 100),
   created_at timestamptz not null default now()
 );
 create table public.participations (
