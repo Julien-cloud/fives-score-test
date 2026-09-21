@@ -21,11 +21,12 @@
   <link rel="stylesheet" href="completed-match-colors.css" />
   <link rel="stylesheet" href="best-five.css" />
   <link rel="stylesheet" href="legal-pages.css" />
+  <link rel="stylesheet" href="multi-league.css" />
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="#accueil"><span class="ball">⚽</span><span>FIVES <b>LEAGUE</b></span></a>
-    <div class="top-actions"><span class="connection-status" id="connectionStatus">Mode démo</span><button class="icon-button" id="settingsBtn" aria-label="Réglages">⚙</button></div>
+    <div class="top-actions"><div class="league-switcher"><select id="leagueSelect" aria-label="Ligue active" disabled><option>Chargement…</option></select><button id="newLeagueBtn" class="league-add" type="button" title="Créer une ligue" aria-label="Créer une ligue">+</button><button id="manageLeagueBtn" class="league-manage" type="button" title="Gérer l'effectif de la ligue">☷</button></div><span class="connection-status" id="connectionStatus">Mode démo</span><button class="icon-button" id="settingsBtn" aria-label="Réglages">⚙</button></div>
   </header>
   <main>
     <section class="hero" id="accueil">
@@ -205,6 +206,8 @@
   <footer class="site-footer"><div><a class="footer-brand" href="#accueil">⚽ FIVES <b>LEAGUE</b></a><p>Les statistiques de nos Five, match après match.</p></div><nav aria-label="Informations du site"><a href="rgpd.html">RGPD</a><a href="cgu.html">CGU</a><a href="reseaux.html">Réseaux sociaux</a></nav><small>© 2026 FIVES LEAGUE</small></footer>
 
   <dialog id="playerDialog"><form class="modal"><button class="close" type="button">×</button><p class="eyebrow" data-i18n="newItem">NOUVEL ÉLÉMENT</p><h2 data-i18n="newPlayer">Ajouter un joueur</h2><label><span data-i18n="firstName">Prénom</span><input id="playerName" required maxlength="24" placeholder="Ex. Julien" /></label><label><span data-i18n="lastNameOptional">Nom (facultatif)</span><input id="playerLastName" maxlength="32" placeholder="Ex. Dupont" /></label><label><span data-i18n="avatarUrl">Photo de profil (URL)</span><input id="playerAvatarUrl" type="url" placeholder="https://…" /></label><div class="avatar-upload" id="newAvatarDrop" tabindex="0" role="button" aria-label="Déposer ou choisir une photo"><input id="newAvatarFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" hidden><img class="avatar-upload-preview" alt="Aperçu de la photo" hidden><div><span>📷</span><b>Glisse une photo ici</b><small>ou clique pour la sélectionner · JPG, PNG, WEBP · 5 Mo max.</small></div></div><label><span data-i18n="profile">Profil</span><select id="playerPosition"><option value="polyvalent">Polyvalent</option><option value="attaque">Attaque</option><option value="milieu">Milieu</option><option value="defense">Défense</option><option value="gardien">Gardien</option></select></label><button class="primary wide" id="savePlayerBtn" type="button" data-i18n="addToSquad">Ajouter à l'effectif</button></form></dialog>
+  <dialog id="leagueDialog"><form class="modal"><button class="close" type="button">×</button><p class="eyebrow">NOUVELLE LIGUE</p><h2>Créer un groupe</h2><label>Nom de la ligue<input id="leagueName" maxlength="60" required placeholder="Ex. Foot du boulot" /></label><label>Saison (facultatif)<input id="leagueSeason" maxlength="24" placeholder="Ex. 2026-2027" /></label><button id="saveLeagueBtn" class="primary wide" type="button">Créer la ligue</button></form></dialog>
+  <dialog id="leagueMembersDialog"><div class="modal"><button class="close" type="button">×</button><p class="eyebrow">EFFECTIF</p><h2 id="leagueMembersTitle">Joueurs de la ligue</h2><p class="muted">Coche les joueurs qui font partie de cette ligue. Leurs statistiques resteront séparées des autres groupes.</p><div id="leagueMembersList" class="league-members-list"></div><button id="saveLeagueMembersBtn" class="primary wide" type="button">Enregistrer l'effectif</button></div></dialog>
 
   <dialog id="matchDialog"><div class="modal match-modal"><button class="close" type="button" aria-label="Annuler et fermer">×</button><p class="eyebrow" data-i18n="newMatch">NOUVEAU MATCH</p><h2 data-i18n="saveResult">Enregistrer le résultat</h2>
     <div class="stepper"><span class="active" data-step-indicator="1" data-i18n="stepTeams">1 · Équipes</span><span data-step-indicator="2" data-i18n="stepResult">2 · Résultat</span></div>
