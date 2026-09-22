@@ -62,7 +62,7 @@
       <div class="section-heading trophy-heading"><div><p class="eyebrow">LE PODIUM</p><h2 data-i18n="trophyRace">Course aux trophées</h2></div><button class="trophy-toggle" id="trophyToggle" type="button" aria-expanded="true" aria-controls="trophyPanel"><span>Masquer les cartes</span><b aria-hidden="true">⌃</b></button></div>
       <div class="trophy-panel" id="trophyPanel"><div class="trophy-grid" id="trophyGrid"></div></div>
       <div class="card ranking-card">
-        <div class="card-title"><div class="title-with-info"><h3 data-i18n="generalRanking">Classement général</h3><button class="info-button" type="button" data-info-key="points" aria-label="Comment sont calculés les points ?">i</button></div><label class="ranking-filter"><span data-i18n="sortBy">Trier par</span><select id="rankingSort"><option value="points">Points</option><option value="rate">% victoire</option><option value="goals">Buts</option><option value="assists">Passes dé.</option></select></label></div>
+        <div class="card-title"><div class="title-with-info"><h3 data-i18n="generalRanking">Classement général</h3><button class="info-button" type="button" data-info-key="points" aria-label="Comment sont calculés les points ?">i</button></div><label class="ranking-filter"><span data-i18n="sortBy">Trier par</span><select id="rankingSort" data-metric="points"><option value="points">Points</option><option value="rate">% victoire</option><option value="goals">Buts</option><option value="assists">Passes dé.</option></select></label></div>
         <div class="table-wrap"><table><thead><tr><th>#</th><th data-i18n="player">Joueur</th><th>MJ</th><th>V</th><th>N</th><th>D</th><th>Pts</th><th data-i18n="goals">Buts</th><th data-i18n="assistsShort">Passes dé.</th><th>% V</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
       </div>
     </section>
@@ -245,7 +245,7 @@
   <dialog id="matchDialog"><div class="modal match-modal"><button class="close" type="button" aria-label="Annuler et fermer">×</button><p class="eyebrow" data-i18n="newMatch">NOUVEAU MATCH</p><h2 data-i18n="saveResult">Enregistrer le résultat</h2>
     <div class="stepper"><span class="active" data-step-indicator="1" data-i18n="stepTeams">1 · Équipes</span><span data-step-indicator="2" data-i18n="stepResult">2 · Résultat</span></div>
     <section id="matchStepTeams" class="match-step active">
-      <label>Date<input id="matchDate" type="date" required /></label>
+      <div class="match-schedule-fields"><label>Date<input id="matchDate" type="date" required /></label><label>Heure du coup d’envoi (facultative)<input id="matchKickoffTime" type="time" step="300" /></label></div>
       <div class="match-team-board"><div><h3>Team A</h3><div id="matchTeamA" class="dropzone team-zone" data-match-zone="A"></div></div><div><h3>Team B</h3><div id="matchTeamB" class="dropzone team-zone" data-match-zone="B"></div></div></div>
       <div class="zone-title"><h3 data-i18n="availablePlayers">Joueurs disponibles</h3><span id="availableCount" class="count-pill">0</span></div><div id="matchPool" class="dropzone player-pool" data-match-zone="pool"></div><p class="touch-hint" data-i18n="dragHint">Glisse les joueurs ou touche-les pour les déplacer.</p>
       <div class="upcoming-edit-actions"><button class="secondary" id="saveUpcomingBtn" type="button" hidden>Enregistrer les équipes</button><button class="primary wide" id="continueMatchBtn" type="button" data-i18n="continueScore">Continuer vers le score</button></div>

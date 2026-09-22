@@ -65,6 +65,21 @@ html[data-theme="dark"] .mode.active { background:#244332; color:#dff6e7; }
 .video-frame iframe { width:100%; height:100%; border:0; }
 .video-external-link { display:block; width:max-content; margin:14px 0 0 auto; text-decoration:none; }
 .ranking-explanation { margin:-4px 0 18px; color:var(--muted); line-height:1.5; }
+.ranking-value { display:inline-flex; min-width:34px; justify-content:center; padding:5px 9px; border-radius:999px; font-weight:800; line-height:1; }
+.ranking-points { background:#e3ecd7; color:#0b5137; }
+.ranking-goals { background:#ffebe8; color:#b43a31; }
+.ranking-assists { background:#e8f1ff; color:#245fa8; }
+.ranking-filter select { border:1px solid transparent; border-radius:999px; padding:6px 28px 6px 11px; font-weight:800; transition:background-color .2s,color .2s,border-color .2s; }
+.ranking-filter select[data-metric="points"] { background:#e3ecd7; color:#0b5137; border-color:#bfd0aa; }
+.ranking-filter select[data-metric="goals"] { background:#ffebe8; color:#b43a31; border-color:#efbbb5; }
+.ranking-filter select[data-metric="assists"] { background:#e8f1ff; color:#245fa8; border-color:#b8cfed; }
+.ranking-filter select[data-metric="rate"] { background:#f1e9fb; color:#7350a1; border-color:#d3c0e9; }
+#rankingSort option[value="points"] { color:#0b5137; }
+#rankingSort option[value="goals"] { color:#b43a31; }
+#rankingSort option[value="assists"] { color:#245fa8; }
+#rankingSort option[value="rate"] { color:#7350a1; }
+.match-schedule-fields { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+@media(max-width:520px){.match-schedule-fields{grid-template-columns:1fr}}
 html[data-theme="dark"] .player.player-injured { background:#35201f; border-color:#85504c; }
 .avatar-upload { position:relative; display:flex; align-items:center; justify-content:center; gap:14px; min-height:112px; margin:12px 0 18px; padding:14px; border:2px dashed var(--line); border-radius:14px; background:#f8faf6; text-align:center; cursor:pointer; transition:.2s; overflow:hidden; }
 .avatar-upload:hover,.avatar-upload.dragging { border-color:var(--green2); background:#edf5e7; transform:translateY(-1px); }
