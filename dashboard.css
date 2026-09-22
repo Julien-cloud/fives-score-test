@@ -69,6 +69,7 @@ html[data-theme="dark"] .mode.active { background:#244332; color:#dff6e7; }
 .ranking-points { background:#e3ecd7; color:#0b5137; }
 .ranking-goals { background:#ffebe8; color:#b43a31; }
 .ranking-assists { background:#e8f1ff; color:#245fa8; }
+.ranking-rate { background:#f1e9fb; color:#7350a1; }
 .ranking-filter select { border:1px solid transparent; border-radius:999px; padding:6px 28px 6px 11px; font-weight:800; transition:background-color .2s,color .2s,border-color .2s; }
 .ranking-filter select[data-metric="points"] { background:#e3ecd7; color:#0b5137; border-color:#bfd0aa; }
 .ranking-filter select[data-metric="goals"] { background:#ffebe8; color:#b43a31; border-color:#efbbb5; }
