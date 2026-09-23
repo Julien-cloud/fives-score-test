@@ -12,6 +12,10 @@ Les joueurs n'ont pas besoin de compte : ils lisent les statistiques publiquemen
 
 Exécute une seule fois `supabase-migration-atonprime.sql` dans Supabase > SQL Editor. Cette migration ajoute les passes décisives, l’état blessé et le Mode mystère partagé. Elle conserve intégralement les joueurs, matchs, buts et participations existants.
 
+## Garantir l’accès à la Data API
+
+Exécute une seule fois `supabase-migration-data-api-grants.sql` dans Supabase > SQL Editor. Cette migration déclare explicitement les droits Data API des rôles `anon`, `authenticated` et `service_role` pour toutes les tables actuelles. Elle est idempotente, ne modifie aucune donnée et ne remplace pas les politiques RLS, qui continuent de réserver les modifications aux administrateurs autorisés.
+
 ## Ajouter le dépôt des photos de profil
 
 Exécute une seule fois `supabase-migration-avatar-storage.sql` dans Supabase > SQL Editor. Cette migration crée le bucket public `player-avatars`, limite les images à 5 Mo et réserve leur envoi aux quatre comptes administrateurs.

@@ -23,8 +23,9 @@ insert into public.league_members (league_id, player_id) select (select id from 
 
 alter table public.leagues enable row level security;
 alter table public.league_members enable row level security;
-grant select on public.leagues, public.league_members to anon, authenticated;
-grant insert, update, delete on public.leagues, public.league_members to authenticated;
+grant select on public.leagues, public.league_members to anon;
+grant select, insert, update, delete on public.leagues, public.league_members to authenticated;
+grant select, insert, update, delete on public.leagues, public.league_members to service_role;
 
 create policy "lecture publique ligues" on public.leagues for select to anon, authenticated using (true);
 create policy "admin gere ligues" on public.leagues for all to authenticated using ((select auth.jwt() ->> 'email') in ('juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com')) with check ((select auth.jwt() ->> 'email') in ('juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'));
