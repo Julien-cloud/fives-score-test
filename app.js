@@ -418,7 +418,6 @@ async function undoLastLiveGoal(){
   liveGoalHistory.pop();
   persistLiveHistory();
   drawLiveMatch();render();
-  toast('Dernier but annulé.');
 }
 function addLiveFoul(team){
   let opponent=team==='A'?'B':'A';
@@ -442,7 +441,6 @@ function undoLastLiveFoul(){
   localStorage.setItem(liveFoulKey(),JSON.stringify(liveFouls));
   persistLiveHistory();
   drawLiveMatch();
-  toast('Dernière faute annulée.');
 }
 $('#matchModeDialog').addEventListener('click',e=>{
   let foul=e.target.closest('[data-live-foul]');
