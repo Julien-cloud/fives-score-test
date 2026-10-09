@@ -35,4 +35,4 @@
 @media(max-width:460px){.match-expandable .completed-team{display:block}.match-expandable .completed-team b{display:block}.match-expandable .match-admin-actions{display:grid;grid-template-columns:1fr}.match-expandable .match-admin-actions .compact{width:100%}}
 /* Contrôles du Mode Match : deux boutons distincts et alignés. */
 .match-mode-close{top:13px;right:18px;width:34px;height:34px;display:grid;place-items:center;margin:0;border-radius:9px;font-size:23px;line-height:1;background:#ffffff16;border:1px solid #ffffff36}
-.live-fullscreen{top:13px;right:66px;width:34px;min-width:34px;height:34px;margin:0;border-radius:9px}
+.live-fullscreen{top:13px;right:66px;width:34px;min-width:34px;height:34px;margin:0;border-radius:9px}.match-expandable .match-admin-actions .delete-match-btn{background:#fdebea;color:#ae302d;border-color:#f3c4c1}.match-expandable .match-admin-actions .delete-match-btn:hover{background:#f9d9d6}
