@@ -11,3 +11,8 @@
 .match-mode-shell:fullscreen .live-team-heading small{font-size:clamp(13px,.8vw,17px)}
 .match-mode-shell:fullscreen .live-special-goal{min-height:64px;font-size:clamp(18px,1.2vw,23px)}
 @media(max-height:560px){.match-mode-shell:fullscreen .live-player{gap:14px;padding:13px}.match-mode-shell:fullscreen .live-player .mini-avatar{width:42px;height:42px}.match-mode-shell:fullscreen .live-player b{font-size:18px}.match-mode-shell:fullscreen .live-player small{font-size:12px}.match-mode-shell:fullscreen .live-player i{padding:7px 9px;font-size:11px}}
+/* Zone de score centrale élargie pour mieux mettre en scène le chrono. */
+.live-scoreboard{grid-template-columns:minmax(0,1fr) minmax(300px,1.5fr) minmax(0,1fr)}
+.match-mode-shell:fullscreen .live-scoreboard{grid-template-columns:minmax(0,1fr) minmax(360px,1.5fr) minmax(0,1fr)}
+@media(max-width:760px){.live-scoreboard,.match-mode-shell:fullscreen .live-scoreboard{grid-template-columns:minmax(0,1fr) minmax(190px,1.35fr) minmax(0,1fr)}}
+@media(max-width:560px){.live-scoreboard,.match-mode-shell:fullscreen .live-scoreboard{grid-template-columns:1fr 1.08fr 1fr}}
