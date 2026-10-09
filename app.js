@@ -191,3 +191,41 @@ $$('.mode').forEach(b=>b.onclick=()=>{composeMode=b.dataset.mode;$$('.mode').for
 $('#resetComposerBtn').onclick=()=>{composeSheet=[];composeManual={A:[],B:[]};$('#builderResult').innerHTML='';drawComposer();toast('Tous les joueurs sont revenus sur le banc.')};
 $('#settingsBtn').onclick=()=>{let p=$('#accountPanel');p.innerHTML=cloud?(user?`<p class="muted">Connecté : <b>${esc(user.email)}</b>${admin(false)?' — administrateur':' — lecture seule'}</p><button class="primary wide" id="logoutBtn" type="button">Se déconnecter</button>`:'<label>E-mail administrateur<input id="emailInput" type="email" placeholder="prenom@email.com"></label><button class="primary wide" id="loginBtn" type="button">Recevoir mon lien administrateur</button>'):'<p class="muted">Mode de démonstration local.</p>';$('#themeToggle').checked=document.documentElement.dataset.theme==='dark';$('#mysterySetting').hidden=!admin(false);$('#mysteryToggle').checked=appSettings.mystery_mode;applyLanguage();$('#settingsDialog').showModal();$('#themeToggle').onchange=e=>{let theme=e.target.checked?'dark':'light';document.documentElement.dataset.theme=theme;localStorage.setItem('atonprime-theme',theme)};$('#mysteryToggle').onchange=async e=>{let value=e.target.checked;if(cloud){if(!settingsReady){e.target.checked=!value;return toast('Exécute d’abord la migration ATON°PRIME.')}let r=await db.from('app_settings').update({mystery_mode:value,updated_at:new Date().toISOString()}).eq('id','global');if(r.error){e.target.checked=!value;return toast(r.error.message)}}appSettings.mystery_mode=value;render();toast(value?'Mode mystère activé.':'Mode mystère désactivé.')};$('#loginBtn')?.addEventListener('click',async()=>{let email=$('#emailInput').value.trim().toLowerCase();if(!isAdminEmail(email))return toast('Cette adresse n’est pas autorisée.');let r=await db.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:'https://fives-score-test.vercel.app/'}});if(r.error)return toast(r.error.message);toast('Lien administrateur envoyé vers l’environnement de test.')});$('#logoutBtn')?.addEventListener('click',async()=>{await db.auth.signOut();closeDialog($('#settingsDialog'))})};
 bindZones('[data-match-zone]','match',moveMatch);bindZones('#autoSelectionBoard [data-compose-zone]','compose',moveCompose);bindZones('#manualSelectionBoard [data-compose-zone]','composeManual',moveManual);if('scrollRestoration'in history)history.scrollRestoration='manual';restoreNavigation();addEventListener('pagehide',()=>saveNavigation({scrollY:scrollY}));if(cfg())init().finally(restoreScrollPosition);else{render();restoreScrollPosition()}
+
+/* Mode Match v2 — interactions et présentation de test. */
+function ensureLiveControls(){
+  let dialog=$('#matchModeDialog'),shell=dialog.querySelector('.match-mode-shell');
+  if($('#liveFullscreenBtn'))return;
+  dialog.querySelector('.match-mode-header').insertAdjacentHTML('beforeend','<button id="liveFullscreenBtn" class="live-fullscreen" type="button" aria-label="Passer en plein écran">⛶</button>');
+  dialog.insertAdjacentHTML('beforeend','<div id="livePenalty" hidden></div>');
+  let fouls=$$('.live-foul');fouls[0].dataset.liveFoul='A';fouls[1].dataset.liveFoul='B';
+  $('#confirmGoalBtn').hidden=true;
+  $('#goalAssistDialog .modal-actions').insertAdjacentHTML('beforeend','<button id="skipAssistBtn" class="secondary wide" type="button">Passer</button>');
+  document.body.insertAdjacentHTML('beforeend','<dialog id="livePenaltyDialog" class="goal-assist-dialog"><div class="modal goal-assist-modal live-alert-modal"><p class="eyebrow">TROIS CARTONS JAUNES</p><h2 id="livePenaltyTitle">PÉNALTY MLS</h2><p class="muted">Le compteur de cartons jaunes sera remis à zéro.</p><button id="penaltyConfirmBtn" class="primary wide" type="button">OK</button></div></dialog><dialog id="liveFinishDialog" class="goal-assist-dialog"><div class="modal goal-assist-modal live-alert-modal"><p class="eyebrow">FIN DU MATCH</p><h2>Terminer le match ?</h2><p class="muted">Le score et les statistiques enregistrés seront validés.</p><div class="modal-actions"><button id="cancelFinishBtn" class="secondary" type="button">Annuler</button><button id="confirmFinishBtn" class="danger" type="button">Terminer le match</button></div></div></dialog>');
+  document.head.insertAdjacentHTML('beforeend','<style id="live-controls-v2">.live-fullscreen{position:absolute;right:58px;top:15px;width:32px;height:32px;border:1px solid #ffffff38;border-radius:8px;background:#ffffff14;color:#fff;font-size:19px;line-height:1}.match-mode-header{grid-template-columns:1fr auto 1fr;grid-template-rows:auto auto}.match-mode-header .eyebrow{grid-column:1;grid-row:1/3}.match-mode-header h2{grid-column:2;grid-row:1}.live-state{grid-column:2;grid-row:2;justify-self:center;margin-top:5px}.live-team-panel.team-a{background:linear-gradient(135deg,#1d6dba99,#17478188);border-color:#8ec5ff99;box-shadow:inset 3px 0 #a9d1ff}.live-team-panel.team-b{background:linear-gradient(225deg,#a23e4399,#70293688);border-color:#ff9d9399;box-shadow:inset -3px 0 #ffb4ad}.live-foul{background:#f5c842;color:#172214;border-color:#ffe58a}.live-foul b{color:#172214}.live-foul:disabled{opacity:.45}.match-mode-shell:fullscreen{width:100vw;height:100vh;border-radius:0;overflow:auto}.match-mode-shell:fullscreen .live-team-grid{padding-bottom:24px}@media(max-width:650px){.live-fullscreen{right:52px;top:12px}}</style>');
+  $('#liveFullscreenBtn').onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen();screen.orientation?.unlock?.()}else{await (shell.requestFullscreen?.()||shell.webkitRequestFullscreen?.());await screen.orientation?.lock?.('landscape')}}catch(_){toast('Le plein écran est indisponible sur cet appareil.')}};
+  document.addEventListener('fullscreenchange',()=>{$('#liveFullscreenBtn').textContent=document.fullscreenElement?'×':'⛶'});
+  $('#penaltyConfirmBtn').onclick=()=>{let team=$('#livePenaltyDialog').dataset.team;liveFouls[team]=0;localStorage.setItem(liveFoulKey(),JSON.stringify(liveFouls));$('#livePenaltyDialog').close();drawLiveMatch()};
+  $('#cancelFinishBtn').onclick=()=>$('#liveFinishDialog').close();
+  $('#confirmFinishBtn').onclick=finishLiveMatch;
+}
+function openGoalAssist(team,name){
+  let match=liveMatch(),mates=(team==='A'?match.a:match.b).filter(n=>n!==name);
+  pendingLiveGoal={team,name};
+  $('#goalAssistTitle').textContent=`But de ${labelForName(name)}`;
+  $('#assistChoices').innerHTML=mates.map(n=>`<button class="assist-choice" data-assist="${esc(n)}" type="button">${esc(labelForName(n))}</button>`).join('')||'<p class="muted">Aucun coéquipier disponible.</p>';
+  $('#goalAssistDialog').showModal();
+}
+async function finishLiveMatch(){
+  let match=liveMatch(),result=+match.scoreA===+match.scoreB?'N':+match.scoreA>+match.scoreB?'A':'B';
+  if(cloud){let r=await db.from('matches').update({result,live_started_at:null}).eq('id',match.id);if(r.error)return toast(r.error.message);await cloudLoad()}else{match.result=result;render()}
+  localStorage.removeItem(liveFoulKey());$('#liveFinishDialog').close();closeDialog($('#matchModeDialog'));toast('Match terminé, statistiques mises à jour.')
+}
+$('#finishMatchBtn').onclick=()=>$('#liveFinishDialog').showModal();
+$('#matchModeDialog').onclick=e=>{
+  let goal=e.target.closest('[data-live-goal]'),special=e.target.closest('[data-live-special]'),foul=e.target.closest('[data-live-foul]');
+  if(goal)return openGoalAssist(goal.dataset.liveTeam,goal.dataset.liveGoal);
+  if(special)return liveGoal(special.dataset.liveSpecial);
+  if(foul){let team=foul.dataset.liveFoul,opponent=team==='A'?'B':'A';if(liveFouls[team]>=3)return;liveFouls[team]=(liveFouls[team]||0)+1;localStorage.setItem(liveFoulKey(),JSON.stringify(liveFouls));if(liveFouls[team]===3){$('#livePenaltyTitle').textContent=`PÉNALTY MLS POUR TEAM ${opponent}`;$('#livePenaltyDialog').dataset.team=team;$('#livePenaltyDialog').showModal()}drawLiveMatch()}
+};
+$('#assistChoices').onclick=async e=>{let choice=e.target.closest('[data-assist]');if(!choice||!pendingLiveGoal)return;let {team,name}=pendingLiveGoal;closeDialog($('#goalAssistDialog'));pendingLiveGoal=null;await liveGoal(team,name,choice.dataset.assist)};
