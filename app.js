@@ -335,3 +335,147 @@ function requestDeleteMatch(match){
   $('#deleteMatchDialog').showModal();
 }
 $('#matchList').onclick=e=>{let card=e.target.closest('[data-match-id]');if(!card)return;let match=data.matches.find(x=>x.id===card.dataset.matchId);if(e.target.closest('.watch-match-btn')){e.stopPropagation();return openMatchVideo(match)}if(e.target.closest('.match-mode-btn')){e.stopPropagation();return openMatchMode(match)}if(e.target.closest('.share-match-btn')){e.stopPropagation();return shareMatchImage(match)}if(e.target.closest('.edit-match-btn')){e.stopPropagation();return editMatch(match)}if(e.target.closest('.delete-match-btn')){e.stopPropagation();return requestDeleteMatch(match)}card.classList.toggle('expanded')};
+/* Mode Match v7 — annulation contrôlée des derniers événements. */
+let liveGoalHistory=[];
+let liveFoulHistory=[];
+function liveGoalHistoryKey(){return `fives-live-goals-${liveMatchId}`}
+function liveFoulHistoryKey(){return `fives-live-foul-history-${liveMatchId}`}
+function restoreLiveHistory(){
+  try{liveGoalHistory=JSON.parse(localStorage.getItem(liveGoalHistoryKey())||'[]')}catch(_){liveGoalHistory=[]}
+  try{liveFoulHistory=JSON.parse(localStorage.getItem(liveFoulHistoryKey())||'[]')}catch(_){liveFoulHistory=[]}
+}
+function persistLiveHistory(){
+  localStorage.setItem(liveGoalHistoryKey(),JSON.stringify(liveGoalHistory));
+  localStorage.setItem(liveFoulHistoryKey(),JSON.stringify(liveFoulHistory));
+}
+function ensureLiveUndoControls(){
+  if($('#liveUndoToolbar'))return;
+  $('#liveMatchHint').insertAdjacentHTML('afterend','<div id="liveUndoToolbar" class="live-undo-toolbar" aria-label="Corrections du match"><button id="undoLiveGoalBtn" class="live-undo" type="button">↶ Annuler le dernier but</button><button id="undoLiveFoulBtn" class="live-undo" type="button">↶ Annuler la dernière faute</button></div>');
+  $('#undoLiveGoalBtn').onclick=undoLastLiveGoal;
+  $('#undoLiveFoulBtn').onclick=undoLastLiveFoul;
+}
+function refreshLiveUndoControls(){
+  let goal=$('#undoLiveGoalBtn'),foul=$('#undoLiveFoulBtn'),started=!!liveStartedAt;
+  if(goal)goal.disabled=!started||!liveGoalHistory.length;
+  if(foul)foul.disabled=!started||!liveFoulHistory.length;
+}
+const drawLiveMatchV7=drawLiveMatch;
+drawLiveMatch=function(){drawLiveMatchV7();refreshLiveUndoControls()};
+const openMatchModeV7=openMatchMode;
+openMatchMode=async function(match){
+  await openMatchModeV7(match);
+  restoreLiveHistory();
+  ensureLiveUndoControls();
+  refreshLiveUndoControls();
+};
+async function liveGoal(team,name,assister=null){
+  let match=liveMatch();
+  if(!match)return;
+  let nextA=(+match.scoreA||0)+(team==='A'?1:0),nextB=(+match.scoreB||0)+(team==='B'?1:0);
+  match.goals??={};match.assists??={};
+  if(cloud){
+    let score=await db.from('matches').update({score_a:nextA,score_b:nextB}).eq('id',match.id);
+    if(score.error)return toast(score.error.message);
+    if(name){
+      let playerId=match.playerIds[name],goals=(+match.goals[name]||0)+1;
+      let saved=await db.from('participations').update({goals}).eq('match_id',match.id).eq('player_id',playerId);
+      if(saved.error)return toast(saved.error.message);
+    }
+    if(assister){
+      let playerId=match.playerIds[assister],assists=(+match.assists[assister]||0)+1;
+      let saved=await db.from('participations').update({assists}).eq('match_id',match.id).eq('player_id',playerId);
+      if(saved.error)return toast(saved.error.message);
+    }
+  }
+  match.scoreA=nextA;match.scoreB=nextB;
+  if(name)match.goals[name]=(+match.goals[name]||0)+1;
+  if(assister)match.assists[assister]=(+match.assists[assister]||0)+1;
+  liveGoalHistory.push({team,name:name||null,assister:assister||null,at:Date.now()});
+  persistLiveHistory();
+  drawLiveMatch();render();
+}
+async function undoLastLiveGoal(){
+  let event=liveGoalHistory.at(-1),match=liveMatch();
+  if(!event||!match)return toast('Aucun but à annuler dans ce match.');
+  let nextA=Math.max(0,(+match.scoreA||0)-(event.team==='A'?1:0)),nextB=Math.max(0,(+match.scoreB||0)-(event.team==='B'?1:0));
+  if(cloud){
+    let score=await db.from('matches').update({score_a:nextA,score_b:nextB}).eq('id',match.id);
+    if(score.error)return toast(score.error.message);
+    if(event.name){
+      let playerId=match.playerIds[event.name],goals=Math.max(0,(+match.goals?.[event.name]||0)-1);
+      let saved=await db.from('participations').update({goals}).eq('match_id',match.id).eq('player_id',playerId);
+      if(saved.error)return toast(saved.error.message);
+    }
+    if(event.assister){
+      let playerId=match.playerIds[event.assister],assists=Math.max(0,(+match.assists?.[event.assister]||0)-1);
+      let saved=await db.from('participations').update({assists}).eq('match_id',match.id).eq('player_id',playerId);
+      if(saved.error)return toast(saved.error.message);
+    }
+  }
+  match.scoreA=nextA;match.scoreB=nextB;
+  if(event.name)match.goals[event.name]=Math.max(0,(+match.goals[event.name]||0)-1);
+  if(event.assister)match.assists[event.assister]=Math.max(0,(+match.assists[event.assister]||0)-1);
+  liveGoalHistory.pop();
+  persistLiveHistory();
+  drawLiveMatch();render();
+  toast('Dernier but annulé.');
+}
+function addLiveFoul(team){
+  let opponent=team==='A'?'B':'A';
+  if((liveFouls[team]||0)>=3)return;
+  liveFouls[team]=(liveFouls[team]||0)+1;
+  liveFoulHistory.push({team,at:Date.now()});
+  localStorage.setItem(liveFoulKey(),JSON.stringify(liveFouls));
+  persistLiveHistory();
+  if(liveFouls[team]===3){
+    $('#livePenaltyTitle').textContent=`PÉNALTY MLS POUR TEAM ${opponent}`;
+    $('#livePenaltyDialog').dataset.team=team;
+    $('#livePenaltyDialog').showModal();
+  }
+  drawLiveMatch();
+}
+function undoLastLiveFoul(){
+  let event=liveFoulHistory.at(-1);
+  if(!event)return toast('Aucune faute à annuler dans ce match.');
+  liveFouls[event.team]=Math.max(0,(liveFouls[event.team]||0)-1);
+  liveFoulHistory.pop();
+  localStorage.setItem(liveFoulKey(),JSON.stringify(liveFouls));
+  persistLiveHistory();
+  drawLiveMatch();
+  toast('Dernière faute annulée.');
+}
+$('#matchModeDialog').addEventListener('click',e=>{
+  let foul=e.target.closest('[data-live-foul]');
+  if(!foul)return;
+  e.preventDefault();e.stopImmediatePropagation();
+  addLiveFoul(foul.dataset.liveFoul);
+},true);
+function bindPenaltyConfirmV7(){
+  let button=$('#penaltyConfirmBtn');
+  if(!button||button.dataset.undoBound==='true')return;
+  button.dataset.undoBound='true';
+  button.onclick=()=>{
+    let dialog=$('#livePenaltyDialog'),team=dialog?.dataset.team;
+    if(!team)return;
+    liveFouls[team]=0;
+    liveFoulHistory=liveFoulHistory.filter(event=>event.team!==team);
+    localStorage.setItem(liveFoulKey(),JSON.stringify(liveFouls));
+    persistLiveHistory();
+    dialog.close();
+    drawLiveMatch();
+  };
+}
+const ensureLiveControlsV7=ensureLiveControls;
+ensureLiveControls=function(){ensureLiveControlsV7();bindPenaltyConfirmV7()};
+document.head.insertAdjacentHTML('beforeend','<style id="live-controls-v7">.live-undo-toolbar{display:flex;justify-content:center;gap:9px;margin:-3px 26px 14px}.live-undo{padding:8px 11px;border:1px solid #ffffff45;border-radius:9px;background:#ffffff10;color:#f4fff8;font:800 11px/1 Outfit,sans-serif}.live-undo:not(:disabled):hover{background:#ffffff20}.live-undo:disabled{opacity:.42;cursor:not-allowed}@media(max-width:560px){.live-undo-toolbar{margin:0 12px 12px;gap:6px}.live-undo{padding:8px;font-size:9px}}</style>');const finishLiveMatchV7=finishLiveMatch;
+finishLiveMatch=async function(){
+  let matchId=liveMatchId;
+  await finishLiveMatchV7();
+  let match=data.matches.find(item=>item.id===matchId);
+  if(match&&match.result&&match.result!=='P'){
+    localStorage.removeItem(`fives-live-goals-${matchId}`);
+    localStorage.removeItem(`fives-live-foul-history-${matchId}`);
+    liveGoalHistory=[];
+    liveFoulHistory=[];
+  }
+};
