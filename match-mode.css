@@ -16,3 +16,27 @@
 .match-mode-shell:fullscreen .live-scoreboard{grid-template-columns:minmax(0,1fr) minmax(360px,1.5fr) minmax(0,1fr)}
 @media(max-width:760px){.live-scoreboard,.match-mode-shell:fullscreen .live-scoreboard{grid-template-columns:minmax(0,1fr) minmax(190px,1.35fr) minmax(0,1fr)}}
 @media(max-width:560px){.live-scoreboard,.match-mode-shell:fullscreen .live-scoreboard{grid-template-columns:1fr 1.08fr 1fr}}
+/* Plein écran : tableau de score prioritaire, environ 60 % de la hauteur totale avec l’en-tête. */
+.match-mode-shell:fullscreen .match-mode-header{min-height:10vh;padding-top:16px;padding-bottom:14px}
+.match-mode-shell:fullscreen .live-scoreboard{flex:0 0 48vh;min-height:300px;margin:12px 30px 10px;grid-template-columns:minmax(0,1fr) minmax(420px,1.6fr) minmax(0,1fr)}
+.match-mode-shell:fullscreen .live-score-side{gap:14px;padding:22px}
+.match-mode-shell:fullscreen .live-score-side span{font-size:clamp(24px,1.7vw,34px);letter-spacing:2px}
+.match-mode-shell:fullscreen .live-score-side b{font-size:clamp(126px,10vw,190px);line-height:.85}
+.match-mode-shell:fullscreen .match-clock{gap:14px;padding:20px}
+.match-mode-shell:fullscreen .match-clock small{font-size:clamp(15px,1vw,20px);letter-spacing:2.6px}
+.match-mode-shell:fullscreen .match-clock strong{font-size:clamp(74px,6.5vw,128px);line-height:.9}
+.match-mode-shell:fullscreen .live-launch{margin-top:8px;padding:16px 24px;font-size:clamp(14px,1vw,19px)}
+.match-mode-shell:fullscreen .live-team-grid{gap:12px;padding:0 30px 12px}
+.match-mode-shell:fullscreen .live-team-panel{padding:10px}
+.match-mode-shell:fullscreen .live-team-heading{margin-bottom:7px}
+.match-mode-shell:fullscreen .live-team-heading span{font-size:clamp(18px,1.2vw,25px)}
+.match-mode-shell:fullscreen .live-team-heading small{font-size:clamp(11px,.7vw,14px)}
+.match-mode-shell:fullscreen .live-player{gap:10px;padding:10px}
+.match-mode-shell:fullscreen .live-player .mini-avatar{width:clamp(38px,2.5vw,52px);height:clamp(38px,2.5vw,52px)}
+.match-mode-shell:fullscreen .live-player b{font-size:clamp(16px,1.15vw,23px)}
+.match-mode-shell:fullscreen .live-player small{font-size:clamp(10px,.7vw,14px)}
+.match-mode-shell:fullscreen .live-player i{padding:7px 9px;font-size:clamp(10px,.65vw,13px)}
+.match-mode-shell:fullscreen .live-special-goal{min-height:42px;font-size:clamp(14px,.9vw,18px)}
+.match-mode-shell:fullscreen .live-match-footer{padding:10px 30px}
+@media(max-height:820px){.match-mode-shell:fullscreen .live-scoreboard{flex-basis:45vh;min-height:270px}.match-mode-shell:fullscreen .live-score-side b{font-size:clamp(94px,9vw,145px)}.match-mode-shell:fullscreen .match-clock strong{font-size:clamp(58px,6vw,96px)}}
+@media(max-height:620px){.match-mode-shell:fullscreen .match-mode-header{min-height:0}.match-mode-shell:fullscreen .live-scoreboard{flex-basis:40vh;min-height:210px;margin:8px 16px}.match-mode-shell:fullscreen .live-score-side{padding:12px}.match-mode-shell:fullscreen .live-score-side b{font-size:clamp(68px,8vw,105px)}.match-mode-shell:fullscreen .match-clock{gap:6px;padding:10px}.match-mode-shell:fullscreen .match-clock strong{font-size:clamp(44px,5vw,75px)}.match-mode-shell:fullscreen .live-team-grid{padding:0 16px 8px}.match-mode-shell:fullscreen .live-player{padding:7px}.match-mode-shell:fullscreen .live-player b{font-size:15px}.match-mode-shell:fullscreen .live-player small{font-size:10px}}
