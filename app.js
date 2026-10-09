@@ -319,3 +319,19 @@ async function deleteMatch(match){
   toast('Match supprimé.');
 }
 $('#matchList').onclick=e=>{let card=e.target.closest('[data-match-id]');if(!card)return;let match=data.matches.find(x=>x.id===card.dataset.matchId);if(e.target.closest('.watch-match-btn')){e.stopPropagation();return openMatchVideo(match)}if(e.target.closest('.match-mode-btn')){e.stopPropagation();return openMatchMode(match)}if(e.target.closest('.share-match-btn')){e.stopPropagation();return shareMatchImage(match)}if(e.target.closest('.edit-match-btn')){e.stopPropagation();return editMatch(match)}if(e.target.closest('.delete-match-btn')){e.stopPropagation();return deleteMatch(match)}card.classList.toggle('expanded')};
+/* Confirmation de suppression intégrée à l’interface Fives League. */
+let pendingDeleteMatchId=null;
+function ensureDeleteMatchDialog(){
+  if($('#deleteMatchDialog'))return;
+  document.body.insertAdjacentHTML('beforeend','<dialog id="deleteMatchDialog" class="delete-match-dialog"><div class="modal delete-match-modal"><button class="close" type="button" aria-label="Annuler">×</button><p class="eyebrow">ACTION IRRÉVERSIBLE</p><h2>Supprimer ce match ?</h2><p id="deleteMatchSummary" class="muted"></p><p class="delete-match-warning">Les buts, passes et participations liés à ce match seront également supprimés.</p><div class="modal-actions"><button id="cancelDeleteMatchBtn" class="secondary" type="button">Annuler</button><button id="confirmDeleteMatchBtn" class="danger" type="button">Supprimer définitivement</button></div></div></dialog>');
+  let dialog=$('#deleteMatchDialog'),close=()=>{pendingDeleteMatchId=null;dialog.close()};
+  dialog.querySelector('.close').onclick=close;$('#cancelDeleteMatchBtn').onclick=close;dialog.onclick=e=>{if(e.target===dialog)close()};
+  $('#confirmDeleteMatchBtn').onclick=async()=>{let match=data.matches.find(m=>m.id===pendingDeleteMatchId);if(!match)return close();let id=match.id;if(cloud){let r=await db.from('matches').delete().eq('id',id);if(r.error)return toast(r.error.message);await cloudLoad()}else{data.matches=data.matches.filter(m=>m.id!==id);render()}close();toast('Match supprimé.')};
+}
+function requestDeleteMatch(match){
+  if(!admin()||!match)return;ensureDeleteMatchDialog();pendingDeleteMatchId=match.id;
+  let label=new Date(match.date+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long',year:'numeric'});
+  $('#deleteMatchSummary').innerHTML=`Le match du <b>${esc(label)}</b> — score <b>${shown(match.scoreA)} — ${shown(match.scoreB)}</b> — va être supprimé.`;
+  $('#deleteMatchDialog').showModal();
+}
+$('#matchList').onclick=e=>{let card=e.target.closest('[data-match-id]');if(!card)return;let match=data.matches.find(x=>x.id===card.dataset.matchId);if(e.target.closest('.watch-match-btn')){e.stopPropagation();return openMatchVideo(match)}if(e.target.closest('.match-mode-btn')){e.stopPropagation();return openMatchMode(match)}if(e.target.closest('.share-match-btn')){e.stopPropagation();return shareMatchImage(match)}if(e.target.closest('.edit-match-btn')){e.stopPropagation();return editMatch(match)}if(e.target.closest('.delete-match-btn')){e.stopPropagation();return requestDeleteMatch(match)}card.classList.toggle('expanded')};
