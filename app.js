@@ -528,7 +528,7 @@ render=function(){renderV8();decorateRecordCardsLeader()};
 $('#heroStats').addEventListener('click',event=>{if(event.target.closest('.record-cards-trigger'))openRecordCardsRanking()});
 $('#heroStats').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.closest('.record-cards-trigger')){event.preventDefault();openRecordCardsRanking()}});
 /* Playlist Spotify — interface publique, appels sécurisés vers les fonctions Vercel. */
-let spotifySearchResults=[];
+let spotifySearchResults=[],spotifyRefreshTimer=null;
 function spotifyScope(){let league=activeLeague?.();return {leagueId:activeLeagueId||'',season:league?.season||'',leagueName:league?.name||'Ligue'}}
 async function spotifyFetch(path,options={}){
   let headers={...(options.headers||{})};
@@ -586,7 +586,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('#spotifySearchForm')?.addEventListener('submit',event=>{event.preventDefault();let query=$('#spotifySearchInput').value.trim();if(query.length<2)return playlistMessage('Entre au moins deux caractères.','playlist-error');searchSpotifyTracks(query)});
   $('#spotifySearchResults')?.addEventListener('click',event=>{let button=event.target.closest('[data-spotify-add]');if(button)addSpotifyTrack(button.dataset.spotifyAdd)});
   $('#spotifyConnectBtn')?.addEventListener('click',connectSpotify);
-  $$('.tab[data-page="playlist"]').forEach(button=>button.addEventListener('click',loadSpotifyPlaylist));
+  $$('.tab[data-page="playlist"]').forEach(button=>button.addEventListener('click',()=>{
+  setTimeout(loadSpotifyPlaylist,0);
+  clearInterval(spotifyRefreshTimer);
+  spotifyRefreshTimer=setInterval(()=>{if($('#playlist')?.classList.contains('active'))loadSpotifyPlaylist()},30000);
+}));
   if(new URLSearchParams(location.search).get('spotify')==='connected'){history.replaceState({},'',location.pathname+location.hash);toast('Spotify est maintenant connecté.');setTimeout(loadSpotifyPlaylist,250)}
 });
 const cloudLoadPlaylist=cloudLoad;
