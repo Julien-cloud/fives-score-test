@@ -528,7 +528,7 @@ render=function(){renderV8();decorateRecordCardsLeader()};
 $('#heroStats').addEventListener('click',event=>{if(event.target.closest('.record-cards-trigger'))openRecordCardsRanking()});
 $('#heroStats').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.closest('.record-cards-trigger')){event.preventDefault();openRecordCardsRanking()}});
 /* Playlist Spotify — interface publique, appels sécurisés vers les fonctions Vercel. */
-let spotifySearchResults=[],spotifyRefreshTimer=null;
+let spotifySearchResults=[],spotifyRefreshTimer=null,spotifyPlaylistLoading=false;
 function spotifyScope(){let league=activeLeague?.();return {leagueId:activeLeagueId||'',season:league?.season||'',leagueName:league?.name||'Ligue'}}
 async function spotifyFetch(path,options={}){
   let headers={...(options.headers||{})};
@@ -543,17 +543,21 @@ function spotifyTrackCard(track,action=''){
 }
 function playlistMessage(message,type=''){let target=$('#spotifySearchFeedback');if(target){target.className=`playlist-note ${type}`;target.textContent=message||''}}
 function renderSpotifyTracks(tracks=[]){let target=$('#spotifyPlaylistTracks'),count=$('#spotifyTrackCount');if(!target||!count)return;count.textContent=`${tracks.length} titre${tracks.length>1?'s':''}`;target.innerHTML=tracks.length?tracks.map(track=>spotifyTrackCard(track)).join(''):'<p class="playlist-empty">La playlist est prête : propose le premier titre.</p>'}
-async function loadSpotifyPlaylist(){
-  let scope=spotifyScope(),status=$('#spotifyStatusText'),connect=$('#spotifyConnectBtn');
+async function loadSpotifyPlaylist(force=false){
+  let scope=spotifyScope(),status=$('#spotifyStatusText'),connect=$('#spotifyConnectBtn'),refresh=$('#spotifyRefreshBtn');
   if(!status||!scope.leagueId||!scope.season){if(status)status.textContent='Choisis une ligue et une saison pour utiliser la playlist.';return}
-  status.textContent='Chargement de la playlist…';
+  if(spotifyPlaylistLoading)return;
+  spotifyPlaylistLoading=true;
+  if(refresh){refresh.disabled=true;refresh.textContent='Actualisation…'}
+  status.textContent=force?'Synchronisation avec Spotify…':'Chargement de la playlist…';
   try{
-    let response=await spotifyFetch(`/api/spotify/playlist?leagueId=${encodeURIComponent(scope.leagueId)}&season=${encodeURIComponent(scope.season)}`),payload=await response.json();
+    let cacheBust=force?`&refresh=${Date.now()}`:'',response=await spotifyFetch(`/api/spotify/playlist?leagueId=${encodeURIComponent(scope.leagueId)}&season=${encodeURIComponent(scope.season)}${cacheBust}`,{cache:'no-store'}),payload=await response.json();
     if(!response.ok)throw new Error(payload.error||'Impossible de charger la playlist.');
     let link=$('#openSpotifyPlaylist');renderSpotifyTracks(payload.tracks||[]);
     if(payload.playlist){status.textContent=`Playlist connectée · ${payload.playlist.name}`;link.href=payload.playlist.url;link.hidden=false}else{status.textContent='Aucune playlist encore créée pour cette ligue et cette saison.';link.hidden=true}
     connect.hidden=!(admin(false)&&!payload.connected);
   }catch(error){status.textContent='Playlist momentanément indisponible.';renderSpotifyTracks([]);connect.hidden=!admin(false);console.warn(error)}
+  finally{spotifyPlaylistLoading=false;if(refresh){refresh.disabled=false;refresh.textContent='↻ Actualiser'}}
 }
 async function searchSpotifyTracks(query){
   playlistMessage('Recherche sur Spotify…');$('#spotifySearchResults').innerHTML='';
@@ -586,6 +590,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   $('#spotifySearchForm')?.addEventListener('submit',event=>{event.preventDefault();let query=$('#spotifySearchInput').value.trim();if(query.length<2)return playlistMessage('Entre au moins deux caractères.','playlist-error');searchSpotifyTracks(query)});
   $('#spotifySearchResults')?.addEventListener('click',event=>{let button=event.target.closest('[data-spotify-add]');if(button)addSpotifyTrack(button.dataset.spotifyAdd)});
   $('#spotifyConnectBtn')?.addEventListener('click',connectSpotify);
+  $('#spotifyRefreshBtn')?.addEventListener('click',()=>loadSpotifyPlaylist(true));
   $$('.tab[data-page="playlist"]').forEach(button=>button.addEventListener('click',()=>{
   setTimeout(loadSpotifyPlaylist,0);
   clearInterval(spotifyRefreshTimer);
