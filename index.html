@@ -24,6 +24,7 @@
   <link rel="stylesheet" href="comparator.css" />
   <link rel="stylesheet" href="legal-pages.css" />
   <link rel="stylesheet" href="multi-league.css" />
+  <link rel="stylesheet" href="playlist.css" />
 </head>
 <body>
   <button id="leagueDrawerToggle" class="league-drawer-toggle" type="button" hidden aria-label="Ouvrir la gestion des ligues" aria-controls="leagueDrawer" aria-expanded="false"><span>☰</span><small>Ligues</small></button>
@@ -51,6 +52,7 @@
       <button class="tab" data-page="matchs" data-i18n="matches">Matchs</button>
       <button class="tab" data-page="joueurs" data-i18n="players">Joueurs</button>
       <button class="tab" data-page="composer" data-i18n="compose">Composer</button>
+      <button class="tab" data-page="playlist">Playlist</button>
       <button class="tab" data-page="conseils-coach">Exercices Pour Progresser</button>
       <button class="tab" data-page="la-ligue">La Ligue</button>
     </nav>
@@ -184,6 +186,16 @@
       <aside class="coach-tip"><span>💡</span><div><p class="eyebrow">LE CONSEIL DU COACH</p><h3>Mesure ta progression</h3><p>Note tes scores chaque semaine : portes réussies, cibles touchées et temps du parcours. La régularité fait progresser bien plus qu’une séance énorme de temps en temps.</p></div></aside>
     </section>
 
+    <section class="page" id="playlist">
+      <header class="league-intro feature-intro"><div><p class="eyebrow">LA BANDE-SON DU FIVE</p><h2>La playlist de la ligue.</h2><p>Propose un morceau pour l’ambiance du prochain match. Les titres sont ajoutés directement à la playlist Spotify de la ligue et de la saison actives.</p></div><span class="league-ball" aria-hidden="true">🎵</span></header>
+      <div class="playlist-shell">
+        <div class="spotify-status" id="spotifyStatus"><span class="spotify-mark" aria-hidden="true">♫</span><div><b>Playlist Spotify</b><p id="spotifyStatusText">Chargement de la playlist…</p></div><button id="spotifyConnectBtn" class="secondary" type="button" hidden>Connecter Spotify</button></div>
+        <div class="playlist-grid">
+          <article class="card playlist-card"><p class="eyebrow">AJOUTER UN TITRE</p><h3>Quelle musique tu veux entendre ?</h3><form id="spotifySearchForm" class="playlist-search"><input id="spotifySearchInput" type="search" maxlength="120" autocomplete="off" placeholder="Titre, artiste ou album" aria-label="Rechercher une musique Spotify"><button class="primary" type="submit">Rechercher</button></form><p class="playlist-note">Tout le monde peut proposer un titre. Les administrateurs peuvent retirer un morceau directement depuis Spotify.</p><div id="spotifySearchFeedback" class="playlist-note" aria-live="polite"></div><div id="spotifySearchResults" class="playlist-results" aria-live="polite"></div></article>
+          <article class="card playlist-card"><div class="playlist-head"><div><p class="eyebrow">EN CE MOMENT</p><h3>La playlist active</h3></div><span id="spotifyTrackCount" class="playlist-count">0 titre</span></div><a id="openSpotifyPlaylist" href="#" target="_blank" rel="noopener noreferrer" hidden>Ouvrir dans Spotify ↗</a><div id="spotifyPlaylistTracks" class="playlist-tracks"></div></article>
+        </div>
+      </div>
+    </section>
     <section class="page league-page" id="la-ligue">
       <header class="league-intro">
         <div><p class="eyebrow">GUIDE OFFICIEL</p><h2>Bienvenue dans la FIVES LEAGUE</h2><p>Le fonctionnement, les statistiques et les règles de votre ligue et de votre saison, réunis au même endroit.</p></div>
