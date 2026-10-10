@@ -528,7 +528,7 @@ render=function(){renderV8();decorateRecordCardsLeader()};
 $('#heroStats').addEventListener('click',event=>{if(event.target.closest('.record-cards-trigger'))openRecordCardsRanking()});
 $('#heroStats').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.closest('.record-cards-trigger')){event.preventDefault();openRecordCardsRanking()}});
 /* Playlist Spotify — interface publique, appels sécurisés vers les fonctions Vercel. */
-let spotifySearchResults=[],spotifyRefreshTimer=null,spotifyPlaylistLoading=false;
+let spotifySearchResults=[],spotifyRefreshTimer=null,spotifyPlaylistLoading=false,spotifyAddedTrackIds=new Set();
 function spotifyScope(){let league=activeLeague?.();return {leagueId:activeLeagueId||'',season:league?.season||'',leagueName:league?.name||'Ligue'}}
 async function spotifyFetch(path,options={}){
   let headers={...(options.headers||{})};
@@ -542,6 +542,7 @@ function spotifyTrackCard(track,action=''){
   return `<article class="spotify-track">${image?`<img src="${esc(image)}" alt="">`:'<span class="spotify-artwork" aria-hidden="true">♫</span>'}<div><b>${esc(name)}</b><small>${esc([artist,album].filter(Boolean).join(' · '))}</small></div>${action}</article>`;
 }
 function playlistMessage(message,type=''){let target=$('#spotifySearchFeedback');if(target){target.className=`playlist-note ${type}`;target.textContent=message||''}}
+function renderSpotifySearchResults(){let target=$('#spotifySearchResults');if(!target)return;target.innerHTML=spotifySearchResults.map(track=>{let added=spotifyAddedTrackIds.has(track.id),label=added?'Ajouté':'+ Ajouter';return spotifyTrackCard(track,`<button class="spotify-add" type="button" data-spotify-add="${esc(track.id)}"${added?' disabled':''}>${label}</button>`)}).join('')}
 function renderSpotifyTracks(tracks=[]){let target=$('#spotifyPlaylistTracks'),count=$('#spotifyTrackCount');if(!target||!count)return;count.textContent=`${tracks.length} titre${tracks.length>1?'s':''}`;target.innerHTML=tracks.length?tracks.map(track=>spotifyTrackCard(track)).join(''):'<p class="playlist-empty">La playlist est prête : propose le premier titre.</p>'}
 async function loadSpotifyPlaylist(force=false){
   let scope=spotifyScope(),status=$('#spotifyStatusText'),connect=$('#spotifyConnectBtn'),refresh=$('#spotifyRefreshBtn');
@@ -566,7 +567,7 @@ async function searchSpotifyTracks(query){
     if(!response.ok)throw new Error(payload.error||'La recherche a échoué.');
     spotifySearchResults=payload.tracks||[];
     playlistMessage(spotifySearchResults.length?`${spotifySearchResults.length} résultat${spotifySearchResults.length>1?'s':''} trouvé${spotifySearchResults.length>1?'s':''}.`:'Aucun résultat trouvé.');
-    $('#spotifySearchResults').innerHTML=spotifySearchResults.map(track=>spotifyTrackCard(track,`<button class="spotify-add" type="button" data-spotify-add="${esc(track.id)}">+ Ajouter</button>`)).join('');
+        renderSpotifySearchResults();
   }catch(error){playlistMessage(error.message||'Recherche indisponible.','playlist-error')}
 }
 async function addSpotifyTrack(id){
@@ -576,7 +577,7 @@ async function addSpotifyTrack(id){
     let response=await spotifyFetch('/api/spotify/playlist',{method:'POST',body:JSON.stringify({...scope,track})}),payload=await response.json();
     if(!response.ok)throw new Error(payload.error||'Impossible d’ajouter ce titre.');
     playlistMessage(`« ${track.name} » a été ajouté à la playlist.`, 'playlist-success');
-    $('#spotifySearchResults').innerHTML='';spotifySearchResults=[];await loadSpotifyPlaylist();
+    spotifyAddedTrackIds.add(track.id);renderSpotifySearchResults();await loadSpotifyPlaylist();
   }catch(error){playlistMessage(error.message||'Ajout indisponible.','playlist-error')}
 }
 async function connectSpotify(){
