@@ -477,3 +477,53 @@ finishLiveMatch=async function(){
     liveFoulHistory=[];
   }
 };
+/* Palmarès et historique v8 — leaders par match et classement des cartes. */
+function matchStatLeaders(match){
+  let players=[...new Set([...(match.a||[]),...(match.b||[])])];
+  let build=(field,icon,label)=>{
+    let best=Math.max(0,...players.map(name=>+match[field]?.[name]||0));
+    if(!best)return `<span>${icon} ${label} <b>—</b></span>`;
+    let leaders=players.filter(name=>(+match[field]?.[name]||0)===best).map(labelForName);
+    return `<span>${icon} ${label} <b>${esc(leaders.join(', '))}</b><small>${shown(best,field==='goals'?' but':' passe dé.')}</small></span>`;
+  };
+  return `<div class="match-stat-leaders">${build('goals','⚽','Meilleur buteur')}${build('assists','🎯','Meilleur passeur')}</div>`;
+}
+const renderMatchCardV8=renderMatchCard;
+renderMatchCard=function(match){
+  let card=renderMatchCardV8(match);
+  return match.result==='P'?card:card.replace('<div class="match-details"><div>','<div class="match-details"><div>'+matchStatLeaders(match));
+};
+function recordCardsTable(){
+  let st=stats(),rules=[
+    ['points',p=>p.m],['weightedRate',p=>p.m],['goals',p=>p.goals>0],['maxGoals',p=>p.maxGoals>0],['topScorerMatches',p=>p.topScorerMatches>0],
+    ['assists',p=>p.assists>0],['maxAssists',p=>p.maxAssists>0],['topAssisterMatches',p=>p.topAssisterMatches>0],['contributions',p=>p.contributions>0],['contributionsPerMatch',p=>p.m&&+p.contributionsPerMatch>0],
+    ['maxContributions',p=>p.maxContributions>0],['topOffensiveMatches',p=>p.topOffensiveMatches>0],['unbeaten',p=>p.m],['longestWinStreak',p=>p.longestWinStreak>0],['mvp',p=>p.motm>0],['attendance',p=>p.m]
+  ],counts=Object.fromEntries(st.map(player=>[player.name,0]));
+  rules.forEach(([metric,eligible])=>{
+    let candidates=st.filter(eligible),leader=sortedPlayers(candidates,metric)[0];
+    if(!leader)return;
+    let value=metric==='mvp'?leader.motm:metric==='attendance'?leader.m:+leader[metric];
+    candidates.filter(player=>(metric==='mvp'?player.motm:metric==='attendance'?player.m:+player[metric])===value).forEach(player=>counts[player.name]++);
+  });
+  return [...st].filter(player=>counts[player.name]>0).sort((a,b)=>counts[b.name]-counts[a.name]||a.name.localeCompare(b.name)).map(player=>({...player,recordCards:counts[player.name]}));
+}
+function openRecordCardsRanking(){
+  let ranking=recordCardsTable();
+  $('#rankingDialogTitle').textContent='Classement des records';
+  $('#rankingDialogExplanation').textContent='Une carte de record est attribuée à chaque joueur en tête d’une des 16 catégories. Les égalités sont comptabilisées pour tous les leaders.';
+  $('#rankingPodium').innerHTML=ranking.map((player,index)=>`<article class="podium-row rank-${Math.min(index+1,3)}"><span class="medal">${index<3?['🥇','🥈','🥉'][index]:`${index+1}.`}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${shown(player.recordCards,' carte'+(player.recordCards>1?'s':''))} de record</small></div></article>`).join('')||'<p class="muted">Pas encore assez de données.</p>';
+  $('#rankingDialog').showModal();
+}
+function decorateRecordCardsLeader(){
+  let leader=$('#heroStats .record-holder-stat');
+  if(!leader)return;
+  leader.classList.add('record-cards-trigger');
+  leader.tabIndex=0;
+  leader.setAttribute('role','button');
+  leader.setAttribute('aria-label','Voir le classement des joueurs ayant le plus de cartes de record');
+  leader.title='Voir le classement des records';
+}
+const renderV8=render;
+render=function(){renderV8();decorateRecordCardsLeader()};
+$('#heroStats').addEventListener('click',event=>{if(event.target.closest('.record-cards-trigger'))openRecordCardsRanking()});
+$('#heroStats').addEventListener('keydown',event=>{if((event.key==='Enter'||event.key===' ')&&event.target.closest('.record-cards-trigger')){event.preventDefault();openRecordCardsRanking()}});

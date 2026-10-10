@@ -40,3 +40,10 @@
 .delete-match-dialog{max-width:min(460px,calc(100vw - 28px));border:0;border-radius:16px;background:#fff;box-shadow:0 28px 72px #10251b73}
 .delete-match-dialog::backdrop{background:#10251baa;backdrop-filter:blur(4px)}
 .delete-match-modal{padding:28px}.delete-match-modal h2{margin-bottom:10px;color:#203a2e}.delete-match-modal .eyebrow{color:#b43a35}.delete-match-modal .muted{margin:0 0 13px}.delete-match-warning{margin:0;padding:11px 12px;border:1px solid #f2cbca;border-radius:9px;background:#fff2f1;color:#8d302c;font-size:13px;line-height:1.45}.delete-match-modal .modal-actions{margin-top:20px}.delete-match-modal .danger{background:#c8433d;color:#fff}.delete-match-modal .danger:hover{background:#ad332f}
+/* Palmarès et leaders par match. */
+.record-cards-trigger{cursor:pointer;border-radius:10px;transition:background .18s,transform .18s}
+.record-cards-trigger:hover,.record-cards-trigger:focus-visible{background:#ffffff12;outline:2px solid #c5f15a;outline-offset:5px;transform:translateY(-1px)}
+.match-stat-leaders{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px}
+.match-stat-leaders span{display:inline-flex;align-items:center;gap:5px;padding:6px 8px;border:1px solid #dce7df;border-radius:8px;background:#fff;color:#395047;font-size:12px}
+.match-stat-leaders b{color:#193f2e}.match-stat-leaders small{color:#718078;font-size:11px;font-weight:700}
+@media(max-width:520px){.match-stat-leaders{display:grid;grid-template-columns:1fr}.match-stat-leaders span{justify-content:space-between}}
