@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="upgrade.css" />
   <link rel="stylesheet" href="composer.css" />
   <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="home.css" />
   <link rel="stylesheet" href="league.css" />
   <link rel="stylesheet" href="feature-cards.css" />
   <link rel="stylesheet" href="coach.css" />
@@ -40,7 +41,7 @@
     <div class="top-actions"><span class="connection-status" id="connectionStatus">Mode démo</span><button class="icon-button" id="settingsBtn" aria-label="Réglages">⚙</button></div>
   </header>
   <main>
-    <section class="hero" id="accueil">
+    <section class="hero" id="landing">
       <p class="eyebrow" id="leagueContext">FIVES LEAGUE · SAISON 2026-2027</p>
       <h1 data-i18n="heroTitle">Les stats du terrain.</h1>
       <p data-i18n="heroSubtitle">Chaque match compte. Qui soulèvera les trophées ?</p>
@@ -48,7 +49,8 @@
     </section>
 
     <nav class="tabs" aria-label="Navigation">
-      <button class="tab active" data-page="classement" data-i18n="ranking">Classement</button>
+      <button class="tab active" data-page="accueil">Accueil</button>
+      <button class="tab" data-page="classement" data-i18n="ranking">Classement</button>
       <button class="tab" data-page="matchs" data-i18n="matches">Matchs</button>
       <button class="tab" data-page="joueurs" data-i18n="players">Joueurs</button>
       <button class="tab" data-page="composer" data-i18n="compose">Composer</button>
@@ -57,13 +59,24 @@
       <button class="tab" data-page="la-ligue">La Ligue</button>
     </nav>
 
-    <section class="page active" id="classement">
+    <section class="page active home-page" id="accueil">
+      <header class="home-intro">
+        <div><p class="eyebrow">AUJOURD’HUI DANS LA LIGUE</p><h2>Le terrain vous attend.</h2><p>Tout ce qu’il faut pour préparer le prochain five, suivre la saison et passer à l’action sans chercher dans les menus.</p></div><span aria-hidden="true">⚽</span>
+      </header>
+      <section id="homePrimaryAction" class="home-primary-action" aria-live="polite"></section>
+      <div class="home-dashboard-grid">
+        <article class="card home-season-card"><p class="eyebrow">LA SAISON EN BREF</p><h3>Le pouls de la ligue</h3><div id="homeSeasonPulse" class="home-pulse"></div></article>
+        <article class="card home-leaders-card"><p class="eyebrow">À SUIVRE</p><h3>Les leaders du moment</h3><div id="homeLeaders" class="home-leaders"></div></article>
+      </div>
+      <section class="home-shortcuts" aria-label="Raccourcis"><button type="button" data-home-page="matchs">📋 Voir les matchs</button><button type="button" data-home-page="joueurs">👥 Explorer les joueurs</button><button type="button" data-home-page="composer">🧩 Composer les équipes</button><button type="button" data-home-page="playlist">♫ Ouvrir la playlist</button></section>
+    </section>
+    <section class="page" id="classement">
       <header class="league-intro feature-intro"><div><p class="eyebrow">LE TABLEAU DE BORD DE LA SAISON</p><h2>Qui mène la course aux trophées ?</h2><p>Le classement réunit les résultats de la ligue active : trois points pour une victoire, un point pour un nul. Les statistiques individuelles, les distinctions MVP et les performances offensives permettent de suivre la saison match après match.</p></div><span class="league-ball" aria-hidden="true">🏆</span></header>
       <div class="section-heading trophy-heading"><div><p class="eyebrow">LE PODIUM</p><h2 data-i18n="trophyRace">Course aux trophées</h2></div><button class="trophy-toggle" id="trophyToggle" type="button" aria-expanded="true" aria-controls="trophyPanel"><span>Masquer les cartes</span><b aria-hidden="true">⌃</b></button></div>
       <div class="trophy-panel" id="trophyPanel"><div class="trophy-grid" id="trophyGrid"></div></div>
       <div class="card ranking-card">
         <div class="card-title"><div class="title-with-info"><h3 data-i18n="generalRanking">Classement général</h3><button class="info-button" type="button" data-info-key="points" aria-label="Comment sont calculés les points ?">i</button></div><label class="ranking-filter"><span data-i18n="sortBy">Trier par</span><select id="rankingSort" data-metric="points"><option value="points">Points</option><option value="rate">% victoire</option><option value="goals">Buts</option><option value="assists">Passes dé.</option></select></label></div>
-        <div class="table-wrap"><table><thead><tr><th>#</th><th data-i18n="player">Joueur</th><th>MJ</th><th>V</th><th>N</th><th>D</th><th>Points</th><th data-i18n="goals">Buts</th><th data-i18n="assistsShort">Passes dé.</th><th>% V</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
+        <p class="ranking-confidence-note">La fiabilité augmente avec le nombre de matchs : les tendances avec moins de trois participations restent à confirmer.</p><div class="table-wrap"><table><thead><tr><th>#</th><th data-i18n="player">Joueur</th><th>MJ</th><th>V</th><th>N</th><th>D</th><th>Points</th><th data-i18n="goals">Buts</th><th data-i18n="assistsShort">Passes dé.</th><th>% V</th><th>Fiabilité</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
       </div>
     </section>
 
