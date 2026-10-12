@@ -58,21 +58,21 @@
         <h1 data-i18n="heroTitle">La saison, en direct.</h1>
         <p data-i18n="heroSubtitle">Le prochain five, la forme du moment et les leaders de la ligue.</p>
         <div class="hero-stats" id="heroStats"></div>
+        <span class="home-hero-icon" aria-hidden="true">📊</span>
       </header>
-      <section id="homePrimaryAction" class="home-primary-action" aria-live="polite"></section>
       <div class="home-dashboard-grid">
-        <article class="card home-season-card"><p class="eyebrow">LA SAISON EN BREF</p><h3>Le pouls de la ligue</h3><div id="homeSeasonPulse" class="home-pulse"></div></article>
+        <article class="card home-season-card"><p class="eyebrow">LA SAISON EN BREF</p><h3>Le pouls de la ligue</h3><div id="homeSeasonPulse" class="home-pulse"></div><div id="homeRecordHolder" class="home-record-holder"></div></article>
         <article class="card home-leaders-card"><p class="eyebrow">À SUIVRE</p><h3>Les leaders du moment</h3><div id="homeLeaders" class="home-leaders"></div></article>
       </div>
-      <section class="home-shortcuts" aria-label="Raccourcis"><button type="button" data-home-page="matchs">📋 Voir les matchs</button><button type="button" data-home-page="joueurs">👥 Explorer les joueurs</button><button type="button" data-home-page="composer">🧩 Composer les équipes</button><button type="button" data-home-page="playlist">♫ Ouvrir la playlist</button></section>
+      <section class="card home-best-five" aria-labelledby="homeBestFiveTitle"><div class="best-five-heading"><div><p class="eyebrow">L’ÉQUIPE TYPE</p><h3 id="homeBestFiveTitle">Le meilleur cinq</h3></div><div class="best-five-badges"><span>5 joueurs</span><strong id="homeBestFiveWinChance">—</strong></div></div><p class="best-five-intro">Une sélection issue des performances, de la régularité et des profils de jeu de la saison.</p><div class="five-pitch" id="homeBestFivePitch"></div></section>
     </section>
     <section class="page" id="classement">
-      <header class="league-intro feature-intro"><div><p class="eyebrow">LE TABLEAU DE BORD DE LA SAISON</p><h2>Qui mène la course aux trophées ?</h2><p>Le classement réunit les résultats de la ligue active : trois points pour une victoire, un point pour un nul. Les statistiques individuelles, les distinctions MVP et les performances offensives permettent de suivre la saison match après match.</p></div><span class="league-ball" aria-hidden="true">🏆</span></header>
+      <header class="league-intro feature-intro"><div><p class="eyebrow">LE TABLEAU DE BORD DE LA SAISON</p><h2>Qui mène la course aux trophées ?</h2><p>Le classement réunit les résultats de la ligue active : trois points pour une victoire, un point pour un nul. Les statistiques individuelles, les distinctions MVP et les performances offensives permettent de suivre la saison match après match.</p><div id="rankingRecordHolder" class="ranking-record-holder"></div></div><span class="league-ball" aria-hidden="true">🏆</span></header>
       <div class="section-heading trophy-heading"><div><p class="eyebrow">LE PODIUM</p><h2 data-i18n="trophyRace">Course aux trophées</h2></div><button class="trophy-toggle" id="trophyToggle" type="button" aria-expanded="true" aria-controls="trophyPanel"><span>Masquer les cartes</span><b aria-hidden="true">⌃</b></button></div>
       <div class="trophy-panel" id="trophyPanel"><div class="trophy-grid" id="trophyGrid"></div></div>
       <div class="card ranking-card">
         <div class="card-title"><div class="title-with-info"><h3 data-i18n="generalRanking">Classement général</h3><button class="info-button" type="button" data-info-key="points" aria-label="Comment sont calculés les points ?">i</button></div><label class="ranking-filter"><span data-i18n="sortBy">Trier par</span><select id="rankingSort" data-metric="points"><option value="points">Points</option><option value="rate">% victoire</option><option value="goals">Buts</option><option value="assists">Passes dé.</option></select></label></div>
-        <p class="ranking-confidence-note">Fiabilité des statistiques : <b>À confirmer</b> (1–2 matchs), <b>À suivre</b> (3–6 matchs), <b>Fiable</b> (7 matchs ou plus).</p><div class="table-wrap"><table><thead><tr><th>#</th><th data-i18n="player">Joueur</th><th>MJ</th><th>V</th><th>N</th><th>D</th><th>Points</th><th data-i18n="goals">Buts</th><th data-i18n="assistsShort">Passes dé.</th><th>% V</th><th>Fiabilité</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
+        <p class="ranking-confidence-note">Fiabilité <button class="info-button" type="button" data-info-key="reliability" aria-label="Comment est calculée la fiabilité ?">i</button></p><div class="table-wrap"><table><thead><tr><th>#</th><th data-i18n="player">Joueur</th><th>MJ</th><th>V</th><th>N</th><th>D</th><th>Points</th><th data-i18n="goals">Buts</th><th data-i18n="assistsShort">Passes dé.</th><th>% V</th><th>Fiabilité</th></tr></thead><tbody id="rankingBody"></tbody></table></div>
       </div>
     </section>
 
