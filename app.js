@@ -592,8 +592,8 @@ function statisticReliability(player){
   let games=player?.m||0;
   if(!games)return {key:'none',label:'Aucune donnée',note:'Aucun match enregistré'};
   if(games<3)return {key:'limited',label:'À confirmer',note:`${games} match${games>1?'s':''} : données limitées`};
-  if(games<8)return {key:'medium',label:'En progression',note:`${games} matchs : tendance à confirmer`};
-  return {key:'solid',label:'Solide',note:`${games} matchs : tendance fiable`};
+  if(games<8)return {key:'medium',label:'Tendance',note:`${games} matchs : tendance indicative`};
+  return {key:'solid',label:'Fiable',note:`${games} matchs : statistique fiable`};
 }
 function confidenceBadge(player){let confidence=statisticReliability(player);return `<span class="stat-confidence ${confidence.key}" title="${esc(confidence.note)}">${esc(confidence.label)}</span>`}
 const statisticsWithConfidence=stats;
@@ -610,7 +610,7 @@ function renderHomeDashboard(st=stats()){
   }
   pulse.innerHTML=`<div><b>${shown(completed.length)}</b><small>match${completed.length>1?'s':''} joué${completed.length>1?'s':''}</small></div><div><b>${shown(data.players.length)}</b><small>joueur${data.players.length>1?'s':''} inscrit${data.players.length>1?'s':''}</small></div><div><b>${shown(completed.reduce((sum,match)=>sum+(+match.scoreA||0)+(+match.scoreB||0),0))}</b><small>buts enregistrés</small></div>`;
   let rows=[['🏆','Leader aux points',points,points?`${shown(points.points)} pts · ${shown(points.m)} MJ`:'Pas encore de leader'],['⚽','Meilleur buteur',scorer,scorer?`${shown(scorer.goals)} but${scorer.goals>1?'s':''} · ${shown(scorer.m)} MJ`:'Pas encore de but'],['🎽','Plus assidu',attendance,attendance?`${shown(attendance.m)} match${attendance.m>1?'s':''}`:'Pas encore de participation']];
-  leaders.innerHTML=rows.map(([icon,label,player,value])=>`<div class="home-leader"><span>${icon}</span>${player?avatar(player,'mini-avatar'):''}<div><b>${esc(player?playerLabel(player):label)}</b><small>${esc(player?`${label} · ${value}`:value)}</small></div>${player?confidenceBadge(player):''}</div>`).join('');
+  leaders.innerHTML=rows.map(([icon,label,player,value])=>`<div class="home-leader"><span class="home-leader-icon">${icon}</span>${player?avatar(player,'mini-avatar'):''}<div><b>${esc(player?playerLabel(player):label)}</b><small>${esc(player?`${label} · ${value}`:value)}</small></div>${player?confidenceBadge(player):''}</div>`).join('');
 }
 const renderWithHomeDashboard=render;
 render=function(){renderWithHomeDashboard();renderHomeDashboard(stats())};
