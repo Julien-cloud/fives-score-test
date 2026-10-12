@@ -7,3 +7,4 @@
 .playlist-tracks::-webkit-scrollbar-thumb{background:#8bb8a0;border-radius:99px}
 .playlist-tracks::-webkit-scrollbar-thumb:hover{background:#4f9670}
 @media(max-width:820px){.playlist-tracks{max-height:680px}}
+.playlist-active-card{background:var(--green);border-color:var(--green);color:#fff}.playlist-active-card .eyebrow{color:var(--lime)}.playlist-active-card .playlist-count{background:var(--lime);color:var(--green)}.playlist-active-card .secondary{background:#fff;color:var(--green)}.playlist-active-card .playlist-empty{color:#d8e7df}.playlist-active-card #openSpotifyPlaylist{color:var(--lime)}.playlist-active-card .playlist-tracks::-webkit-scrollbar-track{background:#ffffff25}.playlist-active-card .playlist-tracks::-webkit-scrollbar-thumb{background:#c5f15a}
