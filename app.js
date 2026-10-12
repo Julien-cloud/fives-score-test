@@ -612,7 +612,7 @@ function renderHomeDashboard(st=stats()){
   leaders.innerHTML=$('#trophyGrid')?.innerHTML||'<p class="muted">Les cartes de trophées apparaîtront après le premier match.</p>';
   let record=recordCardsTable()[0],recordMarkup=record?`<button type="button" class="record-summary-card"><span>🏅</span>${avatar(record,'trophy-avatar')}<div><small>LE PLUS DE RECORDS</small><b>${esc(playerLabel(record))}</b><em>${shown(record.recordCards)} carte${record.recordCards>1?'s':''} de record</em></div><i>Voir le classement →</i></button>`:'<p class="muted">Le détenteur de records apparaîtra après les premiers matchs.</p>';
   if(homeRecord)homeRecord.innerHTML=recordMarkup;
-  if(rankingRecord)rankingRecord.innerHTML=record?`<button type="button" class="ranking-record-summary"><span>🏅</span><div><small>DÉTENTEUR DE RECORDS</small><b>${esc(playerLabel(record))}</b><em>${shown(record.recordCards)} carte${record.recordCards>1?'s':''} de record</em></div></button>`:'';
+  if(rankingRecord)rankingRecord.innerHTML=record?`<button type="button" class="ranking-record-summary"><span>🏅</span>${avatar(record,'trophy-avatar')}<div><small>DÉTENTEUR DE RECORDS</small><b>${esc(playerLabel(record))}</b><em>${shown(record.recordCards)} carte${record.recordCards>1?'s':''} de record</em></div></button>`:'';
   if(homePitch&&$('#bestFivePitch'))homePitch.innerHTML=$('#bestFivePitch').innerHTML;
   if(homeChance&&$('#bestFiveWinChance'))homeChance.textContent=$('#bestFiveWinChance').textContent;
 }
