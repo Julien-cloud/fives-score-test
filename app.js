@@ -618,5 +618,22 @@ function renderHomeDashboard(st=stats()){
 }
 const renderWithHomeDashboard=render;
 render=function(){renderWithHomeDashboard();renderHomeDashboard(stats())};
+/* Historique : la vidéo devient un aperçu large dans l'espace de droite. */
+const renderMatchCardWithVideoPreview=renderMatchCard;
+renderMatchCard=function(match){
+  let card=renderMatchCardWithVideoPreview(match);
+  if(match.result==='P'||!youtubeId(match.youtubeUrl))return card;
+  let template=document.createElement('template');
+  template.innerHTML=card;
+  let video=template.content.querySelector('.match-video-card'),details=template.content.querySelector('.match-details');
+  if(!video||!details)return card;
+  video.remove();
+  let preview=document.createElement('aside');
+  preview.className='match-video-feature';
+  preview.setAttribute('aria-label','Vidéo du match');
+  preview.append(video);
+  details.append(preview);
+  return template.innerHTML;
+};
 document.addEventListener('click',event=>{let button=event.target.closest('[data-home-page]');if(button)activatePage(button.dataset.homePage)});
 render();
