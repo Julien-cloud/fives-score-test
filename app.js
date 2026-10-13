@@ -655,4 +655,22 @@ renderMatchCard=function(match){
   return template.innerHTML;
 };
 document.addEventListener('click',event=>{let button=event.target.closest('[data-home-page]');if(button)activatePage(button.dataset.homePage)});
+/* Les matchs à venir peuvent aussi être annulés par un administrateur. */
+const renderMatchCardWithUpcomingDelete=renderMatchCard;
+renderMatchCard=function(match){
+  let card=renderMatchCardWithUpcomingDelete(match);
+  if(match.result!=='P'||!admin(false))return card;
+  let template=document.createElement('template');
+  template.innerHTML=card;
+  let edit=template.content.querySelector('.edit-match-btn');
+  if(!edit)return card;
+  let actions=document.createElement('div'),remove=document.createElement('button');
+  actions.className='upcoming-edit-actions';
+  remove.type='button';
+  remove.className='danger compact delete-match-btn';
+  remove.textContent='🗑️ Supprimer le match';
+  edit.replaceWith(actions);
+  actions.append(edit,remove);
+  return template.innerHTML;
+};
 render();
