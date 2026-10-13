@@ -673,4 +673,15 @@ renderMatchCard=function(match){
   actions.append(edit,remove);
   return template.innerHTML;
 };
+/* Une composition ne peut être générée qu'avec deux effectifs identiques. */
+$('#generateTeamsBtn').onclick=()=>{
+  if(composeMode==='manual'){
+    if(!composeManual.A.length||!composeManual.B.length)return toast('Place au moins un joueur dans chaque équipe.');
+    if(composeManual.A.length!==composeManual.B.length)return toast('Le nombre de joueurs doit être égal dans les deux équipes.');
+    return showTeams({A:[...composeManual.A],B:[...composeManual.B]});
+  }
+  if(composeSheet.length<2)return toast('Ajoute au moins deux joueurs à la feuille de match.');
+  if(composeSheet.length%2)return toast('Le nombre de joueurs doit être égal dans les deux équipes. Ajoute ou retire un joueur de la feuille de match.');
+  showTeams(composeMode==='fair'?fair(composeSheet):composeMode==='human'?human(composeSheet):random(composeSheet));
+};
 render();
