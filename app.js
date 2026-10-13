@@ -684,4 +684,64 @@ $('#generateTeamsBtn').onclick=()=>{
   if(composeSheet.length%2)return toast('Le nombre de joueurs doit être égal dans les deux équipes. Ajoute ou retire un joueur de la feuille de match.');
   showTeams(composeMode==='fair'?fair(composeSheet):composeMode==='human'?human(composeSheet):random(composeSheet));
 };
+/* Tableau tactique des matchs à venir. */
+let strategyDraft=null;
+function strategyPlayerId(match,name){return match.playerIds?.[name]||player(name)?.id||name}
+function strategyTeamNames(match,team){return team==='A'?match.a:match.b}
+function defaultStrategyPositions(match,team){let names=strategyTeamNames(match,team),slots=[[50,86],[20,66],[80,66],[50,57],[22,37],[78,37],[50,22]],positions={};names.forEach((name,index)=>{let slot=slots[index]||[18+(index*19)%64,22+(index*13)%55];positions[strategyPlayerId(match,name)]={x:slot[0],y:slot[1]}});return positions}
+function strategyNameForId(match,id){return [...match.a,...match.b].find(name=>String(strategyPlayerId(match,name))===String(id))||''}
+function ensureStrategyDialog(){
+  if($('#strategyDialog'))return;
+  document.body.insertAdjacentHTML('beforeend',`<dialog id="strategyDialog" class="strategy-dialog"><div class="strategy-modal"><button class="close" type="button" aria-label="Fermer">×</button><p class="eyebrow">TABLEAU TACTIQUE</p><h2 id="strategyTitle">Préparer la stratégie</h2><p class="strategy-intro" id="strategyIntro">Choisis le joueur qui élabore le plan, puis place librement son équipe sur le terrain.</p><section id="strategyAuthorStep" class="strategy-author-step"><label>Qui élabore la stratégie ?<select id="strategyAuthorSelect"></select></label><button id="strategyAuthorContinueBtn" type="button" class="primary">Ouvrir le terrain</button></section><section id="strategyEditor" hidden><div class="strategy-workspace"><aside class="strategy-roster"><p class="eyebrow" id="strategyTeamLabel">TEAM A</p><h3>Les joueurs de l’équipe</h3><p>Glisse les pions sur le terrain pour définir les placements.</p><div id="strategyRosterList" class="strategy-roster-list"></div></aside><div class="strategy-pitch-wrap"><div class="strategy-pitch-head"><h3>Le terrain</h3><small>Déplace les joueurs librement</small></div><div id="strategyPitch" class="strategy-pitch"><i class="strategy-circle"></i></div></div></div><div class="strategy-note"><label>Nom de la proposition<input id="strategyProposalTitle" maxlength="80" placeholder="Ex. Plan A · pressing haut"></label><label>Explication pour l’équipe (facultatif)<textarea id="strategyProposalNote" maxlength="600" placeholder="Consignes, coups de pied arrêtés, rôle de chacun…"></textarea></label></div><div class="strategy-actions"><button id="strategyResetBtn" class="secondary" type="button">Réinitialiser le placement</button><button id="strategySaveBtn" class="primary" type="button">Partager avec mon équipe</button></div><section class="strategy-proposals"><p class="eyebrow">PROPOSITIONS DE L’ÉQUIPE</p><h3 id="strategyProposalsTitle">Plans disponibles</h3><div id="strategyProposalList" class="strategy-proposal-list"></div></section></section></div></dialog>`);
+  let dialog=$('#strategyDialog');
+  dialog.querySelector('.close').onclick=()=>dialog.close();
+  dialog.onclick=event=>{if(event.target===dialog)dialog.close()};
+  $('#strategyAuthorContinueBtn').onclick=()=>{let name=$('#strategyAuthorSelect').value,match=strategyDraft?.match;if(!match||!name)return;let team=match.a.includes(name)?'A':'B';strategyDraft={...strategyDraft,author:name,team,positions:defaultStrategyPositions(match,team)};$('#strategyAuthorStep').hidden=true;$('#strategyEditor').hidden=false;$('#strategyTeamLabel').textContent=`TEAM ${team}`;$('#strategyProposalTitle').value=`Plan de ${labelForName(name)}`;$('#strategyProposalNote').value='';renderStrategyBoard();renderStrategyProposals()};
+  $('#strategyResetBtn').onclick=()=>{if(!strategyDraft)return;strategyDraft.positions=defaultStrategyPositions(strategyDraft.match,strategyDraft.team);renderStrategyBoard()};
+  $('#strategySaveBtn').onclick=saveMatchStrategy;
+}
+function renderStrategyBoard(){
+  let draft=strategyDraft,match=draft?.match,field=$('#strategyPitch'),roster=$('#strategyRosterList');if(!draft||!match||!field||!roster)return;
+  let names=strategyTeamNames(match,draft.team);roster.innerHTML=names.map(name=>{let p=player(name);return `<div class="strategy-roster-player">${avatar(p,'mini-avatar')}<span><b>${esc(labelForName(name))}</b><small>${esc(positionLabel(p?.position))}</small></span></div>`}).join('');
+  field.innerHTML='<i class="strategy-circle"></i>'+names.map(name=>{let id=strategyPlayerId(match,name),point=draft.positions[id]||{x:50,y:50};return `<button type="button" class="strategy-token team-${draft.team.toLowerCase()}" data-strategy-player-id="${esc(id)}" style="left:${point.x}%;top:${point.y}%" aria-label="Déplacer ${esc(labelForName(name))}"><span>${esc(labelForName(name))}</span></button>`}).join('');
+  field.onpointerdown=event=>{let token=event.target.closest('[data-strategy-player-id]');if(!token)return;let id=token.dataset.strategyPlayerId,move=pointer=>{let rect=field.getBoundingClientRect(),x=clamp((pointer.clientX-rect.left)/rect.width*100,6,94),y=clamp((pointer.clientY-rect.top)/rect.height*100,7,93);draft.positions[id]={x:Math.round(x),y:Math.round(y)};token.style.left=`${x}%`;token.style.top=`${y}%`},stop=pointer=>{try{token.releasePointerCapture(pointer.pointerId)}catch(_){}};token.setPointerCapture(event.pointerId);move(event);token.onpointermove=move;token.onpointerup=stop;token.onpointercancel=stop};
+}
+function strategyMini(strategy,team){let formation=strategy.formation||{};return `<div class="strategy-mini-pitch">${Object.entries(formation).map(([id,point])=>`<i class="strategy-mini-dot team-${team.toLowerCase()}" style="left:${clamp(+point.x||50,0,100)}%;top:${clamp(+point.y||50,0,100)}%"></i>`).join('')}</div>`}
+function renderStrategyProposals(){let root=$('#strategyProposalList'),heading=$('#strategyProposalsTitle'),draft=strategyDraft;if(!root||!draft)return;let list=(draft.strategies||[]).filter(item=>item.team===draft.team);heading.textContent=`Plans disponibles · Team ${draft.team}`;root.innerHTML=list.length?list.map(item=>`<article class="strategy-proposal">${strategyMini(item,draft.team)}<div><b>${esc(item.title||'Proposition tactique')}</b><small>par ${esc(item.strategist?.name?playerLabel(item.strategist):strategyNameForId(draft.match,item.strategist_id)||'un joueur')}</small>${item.note?`<p>${esc(item.note)}</p>`:''}</div></article>`).join(''):'<p class="strategy-empty">Aucune proposition pour le moment. Créez le premier plan de jeu.</p>'}
+async function loadMatchStrategies(match){
+  if(!cloud)return match.strategies||[];
+  let query=await db.from('match_strategies').select('id,team,title,note,formation,created_at,strategist_id,strategist:players!match_strategies_strategist_id_fkey(name,last_name)').eq('match_id',match.id).order('created_at',{ascending:false});
+  if(query.error)throw query.error;
+  match.strategies=query.data||[];return match.strategies;
+}
+async function openMatchStrategy(match){
+  ensureStrategyDialog();
+  let dialog=$('#strategyDialog');strategyDraft={match,strategies:[]};
+  $('#strategyTitle').textContent=`Stratégie · match du ${new Date(match.date+'T12:00').toLocaleDateString('fr-FR')}`;
+  $('#strategyIntro').textContent='Choisis le joueur qui propose le plan : seules les stratégies de son équipe seront affichées.';
+  $('#strategyAuthorStep').hidden=false;$('#strategyEditor').hidden=true;
+  $('#strategyAuthorSelect').innerHTML=[...match.a,...match.b].map(name=>`<option value="${esc(name)}">${esc(labelForName(name))} · Team ${match.a.includes(name)?'A':'B'}</option>`).join('');
+  try{strategyDraft.strategies=await loadMatchStrategies(match)}catch(error){console.warn(error);toast('Les stratégies ne sont pas encore disponibles. Réessaie dans un instant.');return}
+  dialog.showModal();
+}
+async function saveMatchStrategy(){
+  let draft=strategyDraft,match=draft?.match;if(!draft?.author||!match)return;
+  let title=$('#strategyProposalTitle').value.trim()||`Plan de ${labelForName(draft.author)}`,note=$('#strategyProposalNote').value.trim(),strategistId=strategyPlayerId(match,draft.author),record={match_id:match.id,strategist_id:strategistId,team:draft.team,title,formation:draft.positions,note};
+  $('#strategySaveBtn').disabled=true;
+  try{
+    if(cloud){let saved=await db.from('match_strategies').insert(record).select('id,team,title,note,formation,created_at,strategist_id,strategist:players!match_strategies_strategist_id_fkey(name,last_name)').single();if(saved.error)throw saved.error;draft.strategies.unshift(saved.data);match.strategies=draft.strategies}else{let saved={...record,id:crypto.randomUUID(),created_at:new Date().toISOString(),strategist:player(draft.author)};match.strategies??=[];match.strategies.unshift(saved);draft.strategies=match.strategies}
+    $('#strategyProposalTitle').value=`Plan de ${labelForName(draft.author)}`;$('#strategyProposalNote').value='';draft.positions=defaultStrategyPositions(match,draft.team);renderStrategyBoard();renderStrategyProposals();toast('Stratégie partagée avec la Team '+draft.team+'.');
+  }catch(error){toast(error.message||'Impossible de partager cette stratégie.')}finally{$('#strategySaveBtn').disabled=false}
+}
+const renderMatchCardWithStrategy=renderMatchCard;
+renderMatchCard=function(match){
+  let card=renderMatchCardWithStrategy(match);
+  if(match.result!=='P')return card;
+  let template=document.createElement('template');template.innerHTML=card;
+  if(template.content.querySelector('.strategy-match-btn'))return card;
+  let button=document.createElement('button'),actions=template.content.querySelector('.upcoming-edit-actions'),article=template.content.querySelector('.upcoming-match');
+  button.type='button';button.className='secondary compact strategy-match-btn';button.textContent='🧠 Stratégie';
+  (actions||article)?.append(button);return template.innerHTML;
+};
+$('#matchList').addEventListener('click',event=>{let button=event.target.closest('.strategy-match-btn');if(!button)return;let card=button.closest('[data-match-id]'),match=data.matches.find(item=>item.id===card?.dataset.matchId);if(!match)return;event.preventDefault();event.stopImmediatePropagation();openMatchStrategy(match)},true);
 render();
