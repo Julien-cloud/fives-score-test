@@ -17,6 +17,7 @@ create table public.matches (
   kickoff_time time without time zone,
   shirt_a text,
   shirt_b text,
+  reservation_url text,
   result text not null check (result in ('A','B','N','P')),
   motm_id uuid references public.players(id),
   score_a int not null default 0 check (score_a >= 0),
