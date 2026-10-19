@@ -26,7 +26,7 @@ const playerLabel=p=>[p?.name,p?.last_name].filter(Boolean).join(' ')||'—',lab
 function youtubeId(value){if(!value)return'';try{let u=new URL(value),host=u.hostname.replace(/^www\./,'');if(host==='youtu.be')return u.pathname.split('/')[1]||'';if(host==='youtube.com'||host==='m.youtube.com'||host==='music.youtube.com'){if(u.pathname==='/watch')return u.searchParams.get('v')||'';let parts=u.pathname.split('/').filter(Boolean);if(['embed','shorts','live'].includes(parts[0]))return parts[1]||''}}catch(_){}return''}
 const validYoutubeUrl=value=>!value||/^[\w-]{11}$/.test(youtubeId(value));
 const validReservationUrl=value=>{if(!value)return true;try{let url=new URL(value);return value.length<=2048&&url.protocol==='https:'&&!url.username&&!url.password}catch{return false}};
-const reservationLink=value=>value&&validReservationUrl(value)?`<a class="reservation-link" href="${esc(value)}" target="_blank" rel="noopener noreferrer">🔗 Réserver / payer le terrain ↗</a>`:'';
+const reservationLink=value=>value&&validReservationUrl(value)?`<a class="reservation-link" href="${esc(value)}" target="_blank" rel="noopener noreferrer">🔗 Lien de Paiement</a>`:'';
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
 const positionMeta={attaque:{label:'Attaquant',color:'#df4b45'},defense:{label:'Défenseur',color:'#397dd4'},milieu:{label:'Milieu',color:'#8b5fc7'},gardien:{label:'Gardien',color:'#e6a328'},polyvalent:{label:'Polyvalent',color:'#ed7a35'}};
 const positionLabel=key=>language==='fr'?positionMeta[key||'polyvalent'].label:({attaque:'Attacker',defense:'Defender',milieu:'Midfielder',gardien:'Goalkeeper',polyvalent:'All-rounder'}[key||'polyvalent']);
