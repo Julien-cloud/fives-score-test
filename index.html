@@ -96,7 +96,9 @@
       <div class="player-view" id="bestFiveView">
         <section class="best-five-section" aria-labelledby="bestFiveTitle">
           <div class="best-five-heading"><div><p class="eyebrow">L'ÉQUIPE TYPE</p><h3 id="bestFiveTitle">Le meilleur cinq</h3></div><div class="best-five-badges"><span>5 joueurs</span><strong id="bestFiveWinChance" title="Estimation face au niveau moyen de l'effectif">—</strong></div></div>
+          <div class="best-five-selector" role="group" aria-label="Choisir l'équipe type"><button type="button" data-best-five-team="A" aria-pressed="true">Équipe A <small>Meilleur cinq</small></button><button type="button" data-best-five-team="B" aria-pressed="false">Équipe B <small>Deuxième cinq</small></button></div>
           <p class="best-five-intro">Une sélection automatique fondée en priorité sur la forme récente, les victoires, les buts et les contributions. Le profil du joueur améliore sa compatibilité avec un rôle, sans imposer un poste strict.</p>
+          <p id="bestFiveTeamNote" class="best-five-team-note" aria-live="polite"></p>
           <div class="five-pitch" id="bestFivePitch"></div>
         </section>
       </div>
