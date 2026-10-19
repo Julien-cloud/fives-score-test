@@ -34,3 +34,13 @@ Les migrations sont numérotées pour rendre leur ordre lisible. Elles correspon
 | `012-live-match.sql` | Données du Mode Match |
 
 Les migrations ne sont pas une commande automatique de déploiement : elles doivent être exécutées manuellement dans Supabase SQL Editor, après validation.
+
+## Maillots des matchs à venir
+
+La migration distante `add_match_shirt_colors` ajoute deux colonnes facultatives à `matches`. Elle a été appliquée à l'environnement de test ; avant une mise en production, appliquer la même évolution à la base de production :
+
+```sql
+alter table public.matches
+  add column if not exists shirt_a text,
+  add column if not exists shirt_b text;
+```

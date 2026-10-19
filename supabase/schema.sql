@@ -15,6 +15,8 @@ create table public.matches (
   id uuid primary key default gen_random_uuid(),
   date date not null,
   kickoff_time time without time zone,
+  shirt_a text,
+  shirt_b text,
   result text not null check (result in ('A','B','N','P')),
   motm_id uuid references public.players(id),
   score_a int not null default 0 check (score_a >= 0),
