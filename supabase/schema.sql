@@ -11,6 +11,11 @@ create table public.players (
   injured boolean not null default false,
   created_at timestamptz not null default now()
 );
+create table public.player_private_indices (
+  player_id uuid primary key references public.players(id) on delete cascade,
+  indice smallint not null default 3 check (indice between 1 and 5),
+  updated_at timestamptz not null default now()
+);
 create table public.matches (
   id uuid primary key default gen_random_uuid(),
   date date not null,
@@ -40,17 +45,22 @@ create table public.app_settings (
   updated_at timestamptz not null default now()
 );
 alter table public.players enable row level security;
+alter table public.player_private_indices enable row level security;
 alter table public.matches enable row level security;
 alter table public.participations enable row level security;
 alter table public.app_settings enable row level security;
 grant select on public.players, public.matches, public.participations, public.app_settings to anon;
+revoke all on public.player_private_indices from anon;
 grant select, insert, update, delete on public.players, public.matches, public.participations, public.app_settings to authenticated;
+grant select, insert, update, delete on public.player_private_indices to authenticated;
 grant select, insert, update, delete on public.players, public.matches, public.participations, public.app_settings to service_role;
+grant select, insert, update, delete on public.player_private_indices to service_role;
 create policy "lecture publique joueurs" on public.players for select using (true);
 create policy "lecture publique matchs" on public.matches for select using (true);
 create policy "lecture publique participations" on public.participations for select using (true);
 create policy "lecture publique reglages" on public.app_settings for select using (true);
 create policy "admin gere joueurs" on public.players for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));
+create policy "admin gere indices prives joueurs" on public.player_private_indices for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));
 create policy "admin gere matchs" on public.matches for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));
 create policy "admin gere participations" on public.participations for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));
 create policy "admin gere reglages" on public.app_settings for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));

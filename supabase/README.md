@@ -54,3 +54,7 @@ alter table public.matches add column if not exists reservation_url text;
 ```
 
 Le lien est visible par les visiteurs qui consultent le match. Ne pas y enregistrer de données confidentielles.
+
+## Indice privé des joueurs
+
+Les indices de 1 à 5 sont conservés dans une table distincte, accessible uniquement aux administrateurs authentifiés. Ils ne font pas partie des données publiques de la fiche joueur.
