@@ -74,20 +74,22 @@ function matchVenue(address) {
   const destination = encodeURIComponent(address);
   return `<section class="match-venue" aria-label="Lieu du match">
     <strong>📍 Lieu du match</strong>
-    <p>${esc(address)}</p>
-    <div class="match-venue-actions">
-      <a class="secondary compact" href="https://www.google.com/maps/dir/?api=1&amp;destination=${destination}" target="_blank" rel="noopener noreferrer">Google Maps</a>
-      <a class="secondary compact" href="https://waze.com/ul?q=${destination}&amp;navigate=yes" target="_blank" rel="noopener noreferrer">Waze</a>
-      <a class="secondary compact" href="https://maps.apple.com/directions?destination=${destination}" target="_blank" rel="noopener noreferrer">Plans d’Apple</a>
-      <button class="secondary compact" type="button" data-copy-match-address>Copier l’adresse</button>
-    </div>
+    <details class="match-venue-picker">
+      <summary>${esc(address)}</summary>
+      <div class="match-venue-actions">
+        <a class="secondary compact" href="https://www.google.com/maps/dir/?api=1&amp;destination=${destination}" target="_blank" rel="noopener noreferrer">Google Maps</a>
+        <a class="secondary compact" href="https://waze.com/ul?q=${destination}&amp;navigate=yes" target="_blank" rel="noopener noreferrer">Waze</a>
+        <a class="secondary compact" href="https://maps.apple.com/directions?destination=${destination}" target="_blank" rel="noopener noreferrer">Plans d’Apple</a>
+        <button class="secondary compact" type="button" data-copy-match-address>Copier l’adresse</button>
+      </div>
+    </details>
   </section>`;
 }
 
 document.addEventListener('click', async event => {
   const button = event.target.closest('[data-copy-match-address]');
   if (!button) return;
-  const address = button.closest('.match-venue').querySelector('p');
+  const address = button.closest('.match-venue-picker').querySelector('summary');
   try {
     await navigator.clipboard.writeText(address.textContent);
     toast('Adresse copiée.');

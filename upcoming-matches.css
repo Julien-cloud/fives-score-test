@@ -13,16 +13,27 @@
 .match-venue strong {
   font-size: 13px;
 }
-.match-venue p {
-  margin: 4px 0 8px;
-  color: var(--muted);
+.match-venue-picker {
+  margin-top: 4px;
+}
+.match-venue-picker summary {
+  width: fit-content;
+  max-width: 100%;
+  cursor: pointer;
+  color: var(--dark-mint, var(--green));
   font-size: 13px;
+  text-decoration: underline;
   overflow-wrap: anywhere;
+}
+.match-venue-picker summary:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
 }
 .match-venue-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  margin-top: 8px;
 }
 .match-venue-actions a {
   text-decoration: none;
