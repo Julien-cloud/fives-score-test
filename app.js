@@ -610,10 +610,23 @@ function recordCardsTable(){
   return [...st].filter(player=>counts[player.name]>0).sort((a,b)=>counts[b.name]-counts[a.name]||a.name.localeCompare(b.name)).map(player=>({...player,recordCards:counts[player.name]}));
 }
 function openRecordCardsRanking(){
-  let ranking=recordCardsTable();
+  const ranking = recordCardsTable();
+  const groups = [];
+  ranking.forEach((player, index) => {
+    const previous = groups.at(-1);
+    if (previous?.count === player.recordCards) previous.players.push(player);
+    else groups.push({rank: index + 1, count: player.recordCards, players: [player]});
+  });
+
   $('#rankingDialogTitle').textContent='Classement des records';
-  $('#rankingDialogExplanation').textContent='Une carte de record est attribuée à chaque joueur en tête d’une des 16 catégories. Les égalités sont comptabilisées pour tous les leaders.';
-  $('#rankingPodium').innerHTML=ranking.map((player,index)=>`<article class="podium-row${index < 3 ? ` rank-${index+1}` : ''}"><span class="medal">${index<3?['🥇','🥈','🥉'][index]:`${index+1}.`}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${shown(player.recordCards,' carte'+(player.recordCards>1?'s':''))} de record</small></div></article>`).join('')||'<p class="muted">Pas encore assez de données.</p>';
+  $('#rankingDialogExplanation').textContent='Une carte de record est attribuée à chaque joueur en tête d’une des 16 catégories. À nombre égal de cartes, les joueurs partagent la même place.';
+  $('#rankingPodium').innerHTML = groups.map(({rank, players}) => {
+    const medal = ['🥇', '🥈', '🥉'][rank - 1];
+    const cards = players.map(player => `<article class="podium-row${medal ? ' rank-' + rank : ''}"><span class="medal">${medal || rank + '.'}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${shown(player.recordCards,' carte'+(player.recordCards>1?'s':''))} de record</small></div></article>`).join('');
+    if (!medal || players.length === 1) return cards;
+    const label = rank === 1 ? '1re place ex æquo' : rank + 'e place ex æquo';
+    return `<div role="group" aria-label="${label}"><p class="record-tie-label">${label}</p><div class="record-tie-cards">${cards}</div></div>`;
+  }).join('') || '<p class="muted">Pas encore assez de données.</p>';
   $('#rankingDialog').showModal();
 }
 function decorateRecordCardsLeader(){
