@@ -19,6 +19,10 @@ on conflict (id) do nothing;
 
 alter table public.app_settings enable row level security;
 
+grant select on public.app_settings to anon;
+grant select, insert, update, delete on public.app_settings to authenticated;
+grant select, insert, update, delete on public.app_settings to service_role;
+
 drop policy if exists "lecture publique reglages" on public.app_settings;
 create policy "lecture publique reglages" on public.app_settings
   for select using (true);
