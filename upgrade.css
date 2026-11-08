@@ -13,7 +13,8 @@
 }
 .record-tie-cards {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   gap: 8px;
 }
 .record-tie-cards .podium-row {
@@ -25,6 +26,11 @@
 @media (max-width: 480px) {
   .record-tie-cards .podium-row {
     grid-template-columns: auto 1fr;
+    gap: 4px;
+    padding: 6px;
+  }
+  .record-tie-cards .medal {
+    font-size: 20px;
   }
   .record-tie-cards .podium-row > div:last-child {
     grid-column: 1 / -1;

@@ -615,17 +615,20 @@ function recordCardsTable(){
 }
 function renderRankedCards(ranking, score, describe, maxRank = Infinity) {
   const groups = [];
-  ranking.forEach((player, index) => {
+  ranking.forEach(player => {
+    const value = score(player);
     const previous = groups.at(-1);
-    if (previous?.count === score(player)) previous.players.push(player);
-    else groups.push({rank: index + 1, count: score(player), players: [player]});
+    if (previous?.count === value) previous.players.push(player);
+    else groups.push({rank: groups.length + 1, count: value, players: [player]});
   });
 
   return groups.filter(group => group.rank <= maxRank).map(({rank, players}) => {
     const medal = ['🥇', '🥈', '🥉'][rank - 1];
-    const cards = players.map(player => `<article class="podium-row${medal ? ' rank-' + rank : ''}"><span class="medal">${medal || rank + '.'}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${describe(player)}</small></div></article>`).join('');
+    const visiblePlayers = medal ? players.slice(0, 3) : players;
+    const cards = visiblePlayers.map(player => `<article class="podium-row${medal ? ' rank-' + rank : ''}"><span class="medal">${medal || rank + '.'}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${describe(player)}</small></div></article>`).join('');
     if (!medal || players.length === 1) return cards;
-    const label = rank === 1 ? '1re place ex æquo' : rank + 'e place ex æquo';
+    const place = rank === 1 ? '1re place ex æquo' : rank + 'e place ex æquo';
+    const label = players.length > 3 ? `${place} · 3 sur ${players.length} affichés` : place;
     return `<div role="group" aria-label="${label}"><p class="record-tie-label">${label}</p><div class="record-tie-cards">${cards}</div></div>`;
   }).join('') || '<p class="muted">Pas encore assez de données.</p>';
 }
