@@ -120,3 +120,17 @@ html[data-theme="dark"] .avatar-upload:hover,html[data-theme="dark"] .avatar-upl
     gap: 0;
   }
 }
+
+.ranking-card th.goal-difference { white-space:nowrap; }
+.ranking-card:has(th.goal-difference[aria-sort="descending"]) .goal-difference,
+.ranking-card:has(th.goal-difference[aria-sort="descending"]) #rankingSort {
+  background:#d5f5ff;
+  color:#075473;
+  border-color:#1686ae;
+}
+html[data-theme="dark"] .ranking-card:has(th.goal-difference[aria-sort="descending"]) .goal-difference,
+html[data-theme="dark"] .ranking-card:has(th.goal-difference[aria-sort="descending"]) #rankingSort {
+  background:#123c50;
+  color:#9ce7ff;
+  border-color:#4bbbe2;
+}
