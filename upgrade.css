@@ -17,6 +17,15 @@
   grid-auto-columns: minmax(0, 1fr);
   gap: 8px;
 }
+.record-tie-scroll {
+  grid-auto-columns: minmax(9rem, 1fr);
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+.record-tie-scroll:focus-visible {
+  outline: 2px solid var(--dark-sky, var(--green2));
+  outline-offset: -2px;
+}
 .record-tie-cards .podium-row {
   grid-template-columns: auto 28px minmax(0, 1fr);
   gap: 6px;
