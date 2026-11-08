@@ -627,8 +627,7 @@ function renderRankedCards(ranking, score, describe, maxRank = Infinity) {
     const cards = players.map(player => `<article class="podium-row${medal ? ' rank-' + rank : ''}"><span class="medal">${medal || rank + '.'}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${describe(player)}</small></div></article>`).join('');
     if (!medal || players.length === 1) return cards;
     const place = rank === 1 ? '1re place ex æquo' : rank + 'e place ex æquo';
-    const scrollable = players.length > 3;
-    return `<div role="group" aria-label="${place}"><p class="record-tie-label">${place}</p><div class="record-tie-cards${scrollable ? ' record-tie-scroll' : ''}"${scrollable ? ' tabindex="0" role="region" aria-label="Cartes des ex æquo"' : ''}>${cards}</div></div>`;
+    return `<div role="group" aria-label="${place}"><p class="record-tie-label">${place}</p><div class="record-tie-cards">${cards}</div></div>`;
   }).join('') || '<p class="muted">Pas encore assez de données.</p>';
 }
 function openRecordCardsRanking(){
