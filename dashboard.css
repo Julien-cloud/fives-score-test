@@ -138,14 +138,14 @@ html[data-theme="dark"] .avatar-upload:hover,html[data-theme="dark"] .avatar-upl
 }
 
 .ranking-card th.goal-difference { white-space:nowrap; }
-.ranking-card:has(th.goal-difference[aria-sort="descending"]) .goal-difference,
-.ranking-card:has(th.goal-difference[aria-sort="descending"]) #rankingSort {
+.ranking-diff,
+.ranking-filter select[data-metric="diff"] {
   background:#d5f5ff;
   color:#075473;
   border-color:#1686ae;
 }
-html[data-theme="dark"] .ranking-card:has(th.goal-difference[aria-sort="descending"]) .goal-difference,
-html[data-theme="dark"] .ranking-card:has(th.goal-difference[aria-sort="descending"]) #rankingSort {
+html[data-theme="dark"] .ranking-diff,
+html[data-theme="dark"] .ranking-filter select[data-metric="diff"] {
   background:#123c50;
   color:#9ce7ff;
   border-color:#4bbbe2;
