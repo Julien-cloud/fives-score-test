@@ -1,0 +1,146 @@
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --cream: #101820;
+  --white: #1c2a38;
+  --ink: #edf5fb;
+  --muted: #b5c7d7;
+  --line: #486076;
+  --dark-inset: #152330;
+  --dark-raised: #283d51;
+  --dark-green: #173a31;
+  --dark-mint: #a4efc7;
+  --dark-blue: #203e58;
+  --dark-sky: #aad9ff;
+  --dark-red: #4c2a37;
+  --dark-rose: #ffc2c8;
+  --dark-amber: #493820;
+  --dark-gold: #ffdfa0;
+  --dark-purple: #3b3056;
+  --dark-lilac: #ded0ff;
+}
+
+/* Surfaces, controls and keyboard focus */
+[data-theme="dark"] :is(.card, .player, .match, .history-match, .generated-team, .mode, dialog, .legal-card, .social-card, .error-card) {
+  background: var(--white);
+  color: var(--ink);
+  border-color: var(--line);
+}
+[data-theme="dark"] :is(.eyebrow, .profile-link, .legal-card a, .league-section a, .link-button, .playlist-head a, .playlist-success, .config summary, .mode-explainer b, .points-scale b, .special-cases dt, .legal-hero h1, .legal-card h2, .error-code, .score-line, .metric b, .history-goals b, .profile-donut b, .coach-page .coach-routine .eyebrow, .coach-page .coach-filters a) {
+  color: var(--dark-mint);
+}
+[data-theme="dark"] :is(.primary, .league-launch .primary) { background: #a4efc7; color: #102d25; }
+[data-theme="dark"] :is(.secondary, .close:hover, .edit-profile-btn:hover, .info-button:hover, .trophy-toggle, .profile-stats-toggle, .view-toggle, .profile-bar>div) {
+  background: var(--dark-raised);
+  color: var(--ink);
+  border-color: var(--line);
+}
+[data-theme="dark"] :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--dark-sky);
+  outline-offset: 3px;
+}
+[data-theme="dark"] :is(.modal input:not([type=radio]), .modal select, .analytics-toolbar select, .league-picker-label select, .playlist-search input, .strategy-author-step select, .strategy-note input, .strategy-note textarea, .config textarea) {
+  background: var(--dark-inset);
+  color: var(--ink);
+  border-color: #68849c;
+}
+[data-theme="dark"] :is(input, textarea)::placeholder { color: var(--muted); opacity: 1; }
+[data-theme="dark"] :is(.tab.active, .view-toggle button.active, .result-options input:checked+span, .mode.active, .dropzone.over, .profile-legend button:hover, .profile-legend button.active, .shirt-choice[aria-pressed="true"], .stepper span.active, .subtab.active) {
+  background: var(--dark-green);
+  color: var(--dark-mint);
+  border-color: #629d85;
+}
+[data-theme="dark"] :is(.avatar, .mini-avatar, .profile-avatar, .hero-record-avatar, .count-pill, .pill, .result-preview, .legal-date, .home-action-meta span) {
+  background: var(--dark-green);
+  color: var(--dark-mint);
+}
+[data-theme="dark"] :is(.danger, .league-delete, .league-delete:hover, .delete-match-warning, .upcoming-match .delete-match-btn, .match-expandable .match-admin-actions .delete-match-btn) {
+  background: var(--dark-red);
+  color: var(--dark-rose);
+  border-color: #a36575;
+}
+
+/* Accueil, classement, trophées et fiches joueurs */
+[data-theme="dark"] :is(.home-action-card, .record-summary-card, .home-season-card) { background: var(--dark-green); border-color: #508472; }
+[data-theme="dark"] :is(.home-upcoming-card, .ranking-card, .profile-dot-card, .home-best-five) { background: #203347; }
+[data-theme="dark"] :is(.home-action-card p, .record-summary-card small, .record-summary-card em, .home-upcoming-team .shirt-badge, .home-shirt-undefined) { color: var(--muted); }
+[data-theme="dark"] :is(.home-pulse b, .home-leader-icon, .home-shortcuts button, .record-summary-card b, .record-summary-card i, .home-upcoming-card p b, .home-upcoming-team h4) { color: var(--dark-mint); }
+[data-theme="dark"] :is(.home-pulse div, .home-upcoming-card>div>span, .home-shortcuts button:hover, .profile-stats-toggle:hover, .trophy-toggle:hover) { background: var(--dark-raised); }
+[data-theme="dark"] .trophy {
+  background: color-mix(in srgb, var(--trophy-accent) 32%, #162330) !important;
+  border-color: color-mix(in srgb, var(--trophy-bg) 50%, #293b49) !important;
+}
+[data-theme="dark"] .trophy :is(.eyebrow, .trophy-action, h3),
+[data-theme="dark"] .trophy>p:not(.eyebrow) { color: var(--trophy-bg) !important; }
+[data-theme="dark"] .trophy-avatar {
+  background: color-mix(in srgb, var(--trophy-accent) 40%, #111b26);
+  color: var(--trophy-bg, var(--ink));
+  border-color: var(--trophy-bg, var(--line));
+}
+[data-theme="dark"] :is(.player-position, .position-tag, .composer-position) {
+  background: color-mix(in srgb, var(--position-color, #639b88) 24%, #1a2735) !important;
+  color: color-mix(in srgb, var(--position-color, #639b88) 25%, #f6fbff) !important;
+  border-color: var(--line);
+}
+[data-theme="dark"] :is(.stat-confidence.none, .history-result, .podium-row.rank-2) { background: var(--dark-raised); color: var(--ink); }
+[data-theme="dark"] :is(.ranking-points, select[data-metric="points"], .stat-confidence.solid, .history-result.victoire, .exercise-level) { background: var(--dark-green); color: var(--dark-mint); }
+[data-theme="dark"] :is(.ranking-goals, select[data-metric="goals"], .stat-confidence.limited, .history-result.defaite, .exercise-level.hard) { background: var(--dark-red); color: var(--dark-rose); }
+[data-theme="dark"] :is(.ranking-assists, select[data-metric="assists"]) { background: var(--dark-blue); color: var(--dark-sky); }
+[data-theme="dark"] :is(.ranking-rate, select[data-metric="rate"]) { background: var(--dark-purple); color: var(--dark-lilac); }
+[data-theme="dark"] #rankingSort option { background: var(--dark-inset); color: var(--ink); }
+[data-theme="dark"] :is(.stat-confidence.medium, .podium-row.rank-1, .exercise-level.medium, .migration-warning) { background: var(--dark-amber); color: var(--dark-gold); }
+[data-theme="dark"] .podium-row.rank-3 { background: #492f2b; color: #ffd7bc; }
+[data-theme="dark"] .metric.accent { background: var(--dark-green); }
+[data-theme="dark"] .metric.accent b { color: var(--ink); }
+[data-theme="dark"] .avatar-upload.uploading:after { background: var(--dark-inset); color: var(--dark-mint); }
+[data-theme="dark"] .avatar-preview-dialog { background: transparent; }
+[data-theme="dark"] .form-dot.v { background: var(--dark-green); color: var(--dark-mint); }
+[data-theme="dark"] .form-dot.n { background: var(--dark-amber); color: var(--dark-gold); }
+[data-theme="dark"] .form-dot.d { background: var(--dark-red); color: var(--dark-rose); }
+
+/* Matchs, équipes, composition et stratégie */
+[data-theme="dark"] :is(.upcoming-match, .match-expandable, .strategy-dialog) { background: var(--white); color: var(--ink); }
+[data-theme="dark"] :is(.upcoming-teams>div:first-child, .home-upcoming-team-a, .manual-team.team-a) { background: var(--dark-blue); color: var(--dark-sky); border-color: #648fb1; }
+[data-theme="dark"] :is(.upcoming-teams>div:last-child, .home-upcoming-team-b, .manual-team.team-b) { background: var(--dark-red); color: var(--dark-rose); border-color: #a36575; }
+[data-theme="dark"] :is(.match-teams .completed-team-a b, .match-odds>div span:last-child, .delete-match-modal .eyebrow) { color: var(--dark-rose); }
+[data-theme="dark"] :is(.match-teams .completed-team-b b, .match-odds>div span:first-child) { color: var(--dark-sky); }
+[data-theme="dark"] .result-badge.result-a { background: var(--dark-red); color: var(--dark-rose); }
+[data-theme="dark"] .result-badge.result-b { background: var(--dark-blue); color: var(--dark-sky); }
+[data-theme="dark"] .result-badge.result-n { background: var(--dark-raised); color: var(--ink); }
+[data-theme="dark"] :is(.match-expandable .completed-date, .match-expandable .match-details, .match-expandable .match-prediction-history, .shirt-picker, .reservation-field, .match-sheet, .strategy-choice-step, .strategy-author-step, .strategy-roster, .strategy-proposal) {
+  background: var(--dark-inset);
+  color: var(--ink);
+  border-color: var(--line);
+}
+[data-theme="dark"] :is(.match-expandable .score-line, .match-stat-leaders b, .strategy-roster-player em) { color: var(--dark-mint); }
+[data-theme="dark"] :is(.match-odds small, .match-expandable .match-outcome small, .match-stat-leaders small, .kickoff-time, .shirt-picker small, .shirt-picker p, .reservation-field small, .reservation-field p, .compare-player small, .compare-total span, .strategy-intro, .strategy-roster>p, .strategy-roster-player small, .strategy-pitch-head small, .strategy-proposal small, .strategy-proposal p, .strategy-empty) { color: var(--muted); }
+[data-theme="dark"] :is(.match-stat-leaders span, .match-expandable .match-admin-actions .compact:not(.delete-match-btn), .shirt-choice, .strategy-roster-player, .compare-track, .compare-fair-badge, .assist-choice) {
+  background: var(--dark-raised);
+  color: var(--ink);
+  border-color: var(--line);
+}
+[data-theme="dark"] :is(.strategy-roster-player:hover, .assist-choice.selected, .assist-choice:hover) { background: var(--dark-green); color: var(--dark-mint); }
+[data-theme="dark"] .delete-match-modal h2 { color: var(--ink); }
+
+/* Ligues, playlist, exercices et pages secondaires */
+[data-theme="dark"] :is(.league-drawer, .spotify-status, .spotify-track, .coach-page .coach-routine, .coach-page .coach-tip, .league-highlight, .league-finale) {
+  background: var(--white);
+  color: var(--ink);
+  border-color: var(--line);
+}
+[data-theme="dark"] :is(.league-drawer-head h2, .league-drawer-close, .league-picker-label, .spotify-track b) { color: var(--ink); }
+[data-theme="dark"] :is(.league-drawer-note, .league-member, .coach-page .coach-routine li, .coach-page .exercise-card, .spotify-artwork, .spotify-track img) {
+  background: var(--dark-inset);
+  color: var(--ink);
+  border-color: var(--line);
+}
+[data-theme="dark"] :is(.league-member-alt, .league-member:hover, .coach-page .coach-filters a:hover, .league-icon) { background: var(--dark-raised); }
+[data-theme="dark"] :is(.league-member small, .field-hint, .playlist-note, .spotify-status p, .spotify-track small, .playlist-empty) { color: var(--muted); }
+[data-theme="dark"] .playlist-active-card { background: var(--dark-green); border-color: #508472; }
+[data-theme="dark"] :is(.playlist-count, .spotify-add, .spotify-add:hover) { background: var(--dark-green); color: var(--dark-mint); }
+[data-theme="dark"] .spotify-add:disabled { background: var(--dark-raised); color: var(--muted); }
+[data-theme="dark"] .playlist-error { color: var(--dark-rose); }
+[data-theme="dark"] .error-main { background: radial-gradient(circle at 50% 30%, var(--dark-green), var(--cream) 65%); }
+[data-theme="dark"] .coach-page .coach-category-head>span { background: var(--dark-green); }
+[data-theme="dark"] .coach-page .coach-category.speed .coach-category-head>span { background: var(--dark-amber); }
+[data-theme="dark"] .coach-page .coach-category.accuracy .coach-category-head>span { background: var(--dark-blue); }
+[data-theme="dark"] .coach-page .coach-category.finishing .coach-category-head>span { background: var(--dark-red); }
