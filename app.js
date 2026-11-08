@@ -613,7 +613,7 @@ function openRecordCardsRanking(){
   let ranking=recordCardsTable();
   $('#rankingDialogTitle').textContent='Classement des records';
   $('#rankingDialogExplanation').textContent='Une carte de record est attribuée à chaque joueur en tête d’une des 16 catégories. Les égalités sont comptabilisées pour tous les leaders.';
-  $('#rankingPodium').innerHTML=ranking.map((player,index)=>`<article class="podium-row rank-${Math.min(index+1,3)}"><span class="medal">${index<3?['🥇','🥈','🥉'][index]:`${index+1}.`}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${shown(player.recordCards,' carte'+(player.recordCards>1?'s':''))} de record</small></div></article>`).join('')||'<p class="muted">Pas encore assez de données.</p>';
+  $('#rankingPodium').innerHTML=ranking.map((player,index)=>`<article class="podium-row${index < 3 ? ` rank-${index+1}` : ''}"><span class="medal">${index<3?['🥇','🥈','🥉'][index]:`${index+1}.`}</span>${avatar(player,'mini-avatar')}<div><b>${esc(playerLabel(player))}${player.injured?' 🏥':''}</b><small>${shown(player.recordCards,' carte'+(player.recordCards>1?'s':''))} de record</small></div></article>`).join('')||'<p class="muted">Pas encore assez de données.</p>';
   $('#rankingDialog').showModal();
 }
 function decorateRecordCardsLeader(){
