@@ -27,3 +27,11 @@
 .match-venue-actions a {
   text-decoration: none;
 }
+
+.upcoming-match .match-date .unplayed-badge {
+  background: #805319;
+}
+html[data-theme="dark"] .upcoming-match .match-date .unplayed-badge {
+  background: var(--dark-amber);
+  color: var(--dark-gold);
+}
