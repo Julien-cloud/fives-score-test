@@ -64,7 +64,8 @@
 [data-theme="dark"] :is(.home-upcoming-card, .ranking-card, .profile-dot-card, .home-best-five) { background: #203347; }
 [data-theme="dark"] :is(.home-action-card p, .record-summary-card small, .record-summary-card em, .home-upcoming-team .shirt-badge, .home-shirt-undefined) { color: var(--muted); }
 [data-theme="dark"] :is(.home-pulse b, .home-leader-icon, .home-shortcuts button, .record-summary-card b, .record-summary-card i, .home-upcoming-card p b, .home-upcoming-team h4) { color: var(--dark-mint); }
-[data-theme="dark"] :is(.home-pulse div, .home-upcoming-card>div>span, .home-shortcuts button:hover, .profile-stats-toggle:hover, .trophy-toggle:hover) { background: var(--dark-raised); }
+[data-theme="dark"] :is(.home-pulse div, .home-card-icon, .home-shortcuts button:hover, .profile-stats-toggle:hover, .trophy-toggle:hover) { background: var(--dark-raised); }
+[data-theme="dark"] .home-upcoming-card p.eyebrow { color: var(--dark-mint); }
 [data-theme="dark"] .trophy {
   background: color-mix(in srgb, var(--trophy-accent) 32%, #162330) !important;
   border-color: color-mix(in srgb, var(--trophy-bg) 50%, #293b49) !important;
