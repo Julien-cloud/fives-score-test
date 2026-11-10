@@ -80,11 +80,39 @@ function matchVenue(address) {
         <a class="secondary compact" href="https://www.google.com/maps/dir/?api=1&amp;destination=${destination}" target="_blank" rel="noopener noreferrer">Google Maps</a>
         <a class="secondary compact" href="https://waze.com/ul?q=${destination}&amp;navigate=yes" target="_blank" rel="noopener noreferrer">Waze</a>
         <a class="secondary compact" href="https://maps.apple.com/directions?destination=${destination}" target="_blank" rel="noopener noreferrer">Plans d’Apple</a>
+        <button class="secondary compact" type="button" data-citymapper-address>Citymapper</button>
         <button class="secondary compact" type="button" data-copy-match-address>Copier l’adresse</button>
       </div>
     </details>
   </section>`;
 }
+
+document.addEventListener('click', async event => {
+  const button = event.target.closest('[data-citymapper-address]');
+  if (!button) return;
+  const address = button.closest('.match-venue-picker').querySelector('summary').textContent;
+  button.disabled = true;
+  button.textContent = 'Recherche de l’adresse…';
+  try {
+    const query = new URLSearchParams({ q: address, limit: '1' });
+    const response = await fetch(`https://data.geopf.fr/geocodage/search?${query}`, {
+      signal: AbortSignal.timeout(8000)
+    });
+    if (!response.ok) throw new Error('Géocodage indisponible');
+    const result = await response.json();
+    const [longitude, latitude] = result.features?.[0]?.geometry?.coordinates ?? [];
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      throw new Error('Adresse introuvable');
+    }
+    const destination = new URLSearchParams({ endcoord: `${latitude},${longitude}`, endaddress: address });
+    window.location.assign(`https://citymapper.com/directions?${destination}`);
+    button.textContent = 'Citymapper';
+  } catch {
+    button.textContent = 'Citymapper · Réessayer';
+  } finally {
+    button.disabled = false;
+  }
+});
 
 document.addEventListener('click', async event => {
   const button = event.target.closest('[data-copy-match-address]');
