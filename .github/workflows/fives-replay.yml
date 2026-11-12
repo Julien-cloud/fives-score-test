@@ -1,0 +1,45 @@
+name: Dépôt Fives Score Test
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+      timezone: Europe/Paris
+  workflow_dispatch:
+    inputs:
+      lecture_seule:
+        description: Vérifier le dépôt sans publier
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fives-score-test-replay
+  cancel-in-progress: false
+
+jobs:
+  depot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install --no-save --no-package-lock --ignore-scripts playwright-core@1.58.2
+      - name: Vérifier ou traiter le dépôt
+        env:
+          FIVES_DRIVE_SERVICE_ACCOUNT: ${{ secrets.FIVES_DRIVE_SERVICE_ACCOUNT }}
+          FIVES_YOUTUBE_CLIENT: ${{ secrets.FIVES_YOUTUBE_CLIENT }}
+          FIVES_YOUTUBE_REFRESH: ${{ secrets.FIVES_YOUTUBE_REFRESH }}
+          FIVES_SITE_TOKEN: ${{ secrets.FIVES_SITE_TOKEN }}
+          READ_ONLY: ${{ (github.event_name == 'workflow_dispatch' && inputs.lecture_seule) || vars.FIVES_PUBLICATION_ACTIVE != 'true' }}
+        run: |
+          if [ "$READ_ONLY" = true ]; then
+            node scripts/publier-depot.cjs --lecture-seule
+          else
+            node scripts/publier-depot.cjs
+          fi
