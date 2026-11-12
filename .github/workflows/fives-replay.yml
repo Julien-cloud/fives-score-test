@@ -2,7 +2,7 @@ name: Dépôt Fives Score Test
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: '30 0 * * *'
       timezone: Europe/Paris
   workflow_dispatch:
     inputs:
