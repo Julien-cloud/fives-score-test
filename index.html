@@ -144,6 +144,20 @@
         <p class="muted">Choisis un joueur de la ligue pour retrouver ses matchs avec les autres joueurs.</p>
         <div class="teammate-history-filters">
           <label>Joueur <select id="teammateHistoryPlayer"></select></label>
+          <label>Poste du coéquipier <select id="teammateHistoryPosition">
+            <option value="">Tous les postes</option>
+            <option value="gardien">Gardien</option>
+            <option value="defense">Défenseur</option>
+            <option value="milieu">Milieu</option>
+            <option value="attaque">Attaquant</option>
+            <option value="polyvalent">Polyvalent</option>
+          </select></label>
+          <label>Dernier match ensemble <select id="teammateHistoryRecency">
+            <option value="">Toutes les périodes</option>
+            <option value="never">Jamais cette saison</option>
+            <option value="30">Il y a 30 jours ou plus</option>
+          </select></label>
+          <label><input id="teammateHistoryHideInjured" type="checkbox"> Masquer les coéquipiers blessés</label>
         </div>
         <p class="muted" id="teammateHistoryStatus" aria-live="polite"></p>
         <ul class="teammate-chart" id="teammateHistoryRows" aria-label="Temps écoulé depuis le dernier match ensemble"></ul>
