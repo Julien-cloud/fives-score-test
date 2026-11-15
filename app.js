@@ -413,7 +413,7 @@ function renderTeammateHistory() {
   const filter = $('#teammateHistoryPlayer');
   const selected = filter.value;
   const manual = composeMode === 'manual';
-  const names = [...new Set(manual ? [...composeManual.A, ...composeManual.B] : composeSheet)]
+  const names = [...new Set(data.players.map(player => player.name))]
     .sort((a, b) => labelForName(a).localeCompare(labelForName(b), 'fr'));
   filter.innerHTML = names.map(name => `<option value="${esc(name)}">${esc(labelForName(name))}</option>`).join('');
   filter.value = names.includes(selected) ? selected : names[0] || '';
@@ -423,7 +423,7 @@ function renderTeammateHistory() {
   rows.closest('.table-wrap').hidden = names.length < 2;
   if (names.length < 2) {
     rows.innerHTML = '';
-    status.textContent = manual ? 'Place au moins deux joueurs dans les équipes.' : 'Ajoute au moins deux joueurs à la feuille de match.';
+    status.textContent = 'L’historique sera disponible dès que la ligue comptera deux joueurs.';
     return;
   }
 
@@ -456,10 +456,47 @@ function candidateTeams(names,limit=120000){let totalA=Math.ceil(names.length/2)
 function fair(names){let ratings=compositionRatings(names),best;candidateTeams(names).forEach(candidate=>{candidate.score=balance(candidate.A,candidate.B,ratings);if(!best||candidate.score<best.score)best=candidate});return best||random(names)}
 function humanSpice(candidate,ratings){let ranked=[...candidate.A,...candidate.B].sort((a,b)=>ratings[b]-ratings[a]),teamFor=name=>candidate.A.includes(name)?'A':'B',topPair=ranked.length>3&&teamFor(ranked[0])===teamFor(ranked[1])?1:0,bottomPair=ranked.length>3&&teamFor(ranked.at(-1))===teamFor(ranked.at(-2))?1:0;return topPair*12+bottomPair*10}
 function human(names){if(names.length<4)return random(names);let ratings=compositionRatings(names),candidates=candidateTeams(names),fairCandidate=fair(names),ceiling=fairCandidate.score+Math.max(12,fairCandidate.score*.35),flavoured=candidates.map(candidate=>({...candidate,score:balance(candidate.A,candidate.B,ratings)})).filter(candidate=>candidate.score<=ceiling);return flavoured.sort((a,b)=>humanSpice(b,ratings)-humanSpice(a,ratings)||a.score-b.score)[0]||fairCandidate}
+function rotationTeams(names) {
+  const history = teammateHistory(data.matches);
+  const currentDay = Date.parse(today());
+  const ratings = compositionRatings(names);
+  const pairScores = new Map();
+  names.forEach((first, index) => {
+    for (const second of names.slice(index + 1)) {
+      const key = JSON.stringify([first, second].sort());
+      const lastMatch = history.get(key);
+      pairScores.set(key, lastMatch ? Math.max(0, (currentDay - Date.parse(lastMatch.date)) / 86400000) : null);
+    }
+  });
+
+  let best;
+  for (const candidate of candidateTeams(names)) {
+    let neverTogether = 0;
+    let daysApart = 0;
+    for (const team of [candidate.A, candidate.B]) {
+      team.forEach((first, index) => {
+        for (const second of team.slice(index + 1)) {
+          const days = pairScores.get(JSON.stringify([first, second].sort()));
+          if (days === null) neverTogether++;
+          else daysApart += days;
+        }
+      });
+    }
+    const ratingTotal = team => team.reduce((sum, name) => sum + ratings[name], 0);
+    const gap = Math.abs(ratingTotal(candidate.A) - ratingTotal(candidate.B));
+    if (!best || neverTogether > best.neverTogether ||
+      (neverTogether === best.neverTogether && (daysApart > best.daysApart ||
+        (daysApart === best.daysApart && gap < best.gap)))) {
+      best = {candidate, neverTogether, daysApart, gap};
+    }
+  }
+  return best.candidate;
+}
+
 function random(names){let m=shuffle(names),k=Math.ceil(m.length/2);return{A:m.slice(0,k),B:m.slice(k)}}
 function compositionLabel(t){let ratings=compositionRatings([...t.A,...t.B]),score=balance(t.A,t.B,ratings);if(score<12)return 'Équilibre excellent';if(score<25)return 'Équilibre solide';return 'Équilibre plus ouvert'}
 function showTeams(t){let ratings=compositionRatings([...t.A,...t.B]),p=probability(t.A,t.B),team=(label,a)=>`<article class="generated-team"><p class="eyebrow">${label}</p>${a.map(n=>`<div class="generated-player">${avatar(player(n),'mini-avatar')}<span class="generated-player-name">${esc(labelForName(n))}${player(n)?.injured?' 🏥':''}<em class="composer-position" style="--position-color:${positionMeta[player(n)?.position||'polyvalent'].color}">${positionLabel(player(n)?.position)}</em></span><small>${shown(Math.round(ratings[n]))}</small></div>`).join('')}</article>`;$('#builderResult').innerHTML=`<div class="generated-grid">${team('TEAM A',t.A)}${team('TEAM B',t.B)}<div class="odds"><div class="odds-head"><span>Team A · ${shown(p,'%')}</span><b>${compositionLabel(t)}</b><span>Team B · ${shown(100-p,'%')}</span></div><div class="odds-bar"><i style="width:${mystery()?50:p}%"></i></div><small>Calcul pondéré par la fiabilité des données, la forme, les résultats, les contributions, l’expérience et les profils de jeu.</small></div></div>`}
-$$('.mode').forEach(b=>b.onclick=()=>{composeMode=b.dataset.mode;$$('.mode').forEach(x=>x.classList.toggle('active',x===b));$('#builderResult').innerHTML='';drawComposer()});$('#generateTeamsBtn').onclick=()=>{if(composeMode==='manual'){if(!composeManual.A.length||!composeManual.B.length)return toast('Place au moins un joueur dans chaque équipe.');return showTeams({A:[...composeManual.A],B:[...composeManual.B]})}if(composeSheet.length<2)return toast('Ajoute au moins deux joueurs à la feuille de match.');showTeams(composeMode==='fair'?fair(composeSheet):composeMode==='human'?human(composeSheet):random(composeSheet))};
+$$('.mode').forEach(b=>b.onclick=()=>{composeMode=b.dataset.mode;$$('.mode').forEach(x=>x.classList.toggle('active',x===b));$('#builderResult').innerHTML='';drawComposer()});$('#generateTeamsBtn').onclick=()=>{if(composeMode==='manual'){if(!composeManual.A.length||!composeManual.B.length)return toast('Place au moins un joueur dans chaque équipe.');return showTeams({A:[...composeManual.A],B:[...composeManual.B]})}if(composeSheet.length<2)return toast('Ajoute au moins deux joueurs à la feuille de match.');showTeams(composeMode==='fair'?fair(composeSheet):composeMode==='human'?human(composeSheet):composeMode==='rotation'?rotationTeams(composeSheet):random(composeSheet))};
 $('#resetComposerBtn').onclick=()=>{composeSheet=[];composeManual={A:[],B:[]};$('#builderResult').innerHTML='';drawComposer();toast('Tous les joueurs sont revenus sur le banc.')};
 $('#settingsBtn').onclick=()=>{let p=$('#accountPanel');p.innerHTML=cloud?(user?`<p class="muted">Connecté : <b>${esc(user.email)}</b>${admin(false)?' — administrateur':' — lecture seule'}</p><button class="primary wide" id="logoutBtn" type="button">Se déconnecter</button>`:'<label>E-mail administrateur<input id="emailInput" type="email" placeholder="prenom@email.com"></label><button class="primary wide" id="loginBtn" type="button">Recevoir mon lien administrateur</button>'):'<p class="muted">Mode de démonstration local.</p>';$('#themeToggle').checked=document.documentElement.dataset.theme==='dark';$('#mysterySetting').hidden=!admin(false);$('#mysteryToggle').checked=appSettings.mystery_mode;applyLanguage();$('#settingsDialog').showModal();$('#themeToggle').onchange=e=>{let theme=e.target.checked?'dark':'light';document.documentElement.dataset.theme=theme;localStorage.setItem('atonprime-theme',theme)};$('#mysteryToggle').onchange=async e=>{let value=e.target.checked;if(cloud){if(!settingsReady){e.target.checked=!value;return toast('Exécute d’abord la migration ATON°PRIME.')}let r=await db.from('app_settings').update({mystery_mode:value,updated_at:new Date().toISOString()}).eq('id','global');if(r.error){e.target.checked=!value;return toast(r.error.message)}}appSettings.mystery_mode=value;render();toast(value?'Mode mystère activé.':'Mode mystère désactivé.')};$('#loginBtn')?.addEventListener('click',async()=>{let email=$('#emailInput').value.trim().toLowerCase();if(!isAdminEmail(email))return toast('Cette adresse n’est pas autorisée.');let r=await db.auth.signInWithOtp({email,options:{shouldCreateUser:false,emailRedirectTo:window.location.origin+'/'}});if(r.error)return toast(r.error.message);toast('Lien administrateur envoyé.')});$('#logoutBtn')?.addEventListener('click',async()=>{await db.auth.signOut();closeDialog($('#settingsDialog'))})};
 bindZones('[data-match-zone]','match',moveMatch);bindZones('#autoSelectionBoard [data-compose-zone]','compose',moveCompose);bindZones('#manualSelectionBoard [data-compose-zone]','composeManual',moveManual);if('scrollRestoration'in history)history.scrollRestoration='manual';restoreNavigation();addEventListener('pagehide',()=>saveNavigation({scrollY:scrollY}));if(cfg())init().finally(restoreScrollPosition);else{render();restoreScrollPosition()}
@@ -998,7 +1035,7 @@ $('#generateTeamsBtn').onclick=()=>{
   }
   if(composeSheet.length<2)return toast('Ajoute au moins deux joueurs à la feuille de match.');
   if(composeSheet.length%2)return toast('Le nombre de joueurs doit être égal dans les deux équipes. Ajoute ou retire un joueur de la feuille de match.');
-  showTeams(composeMode==='fair'?fair(composeSheet):composeMode==='human'?human(composeSheet):random(composeSheet));
+  showTeams(composeMode==='fair'?fair(composeSheet):composeMode==='human'?human(composeSheet):composeMode==='rotation'?rotationTeams(composeSheet):random(composeSheet));
 };
 /* Tableau tactique des matchs à venir. */
 let strategyDraft=null;
