@@ -14,6 +14,8 @@
 .teammate-history-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 12px 0; }
 .teammate-history-filters label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .teammate-history-filters input[type="checkbox"] { width: auto; margin: 0; }
+.teammate-history-checkboxes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); flex-basis: 100%; gap: 8px 16px; }
+.teammate-history-checkboxes label { display: grid; grid-template-columns: auto minmax(0, 1fr); }
 .teammate-history-filters .teammate-history-range { display: grid; flex: 1 1 220px; }
 .teammate-history-range input { width: 100%; margin: 0; accent-color: #2ca678; }
 .teammate-chart { display: grid; gap: 8px; padding: 0; margin: 12px 0 0; list-style: none; }

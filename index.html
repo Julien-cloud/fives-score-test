@@ -159,8 +159,10 @@
             <span>Délai minimum · <output id="teammateHistoryDaysValue" for="teammateHistoryDays">Tous les délais</output></span>
             <input id="teammateHistoryDays" type="range" min="0" max="30" step="1" value="0">
           </label>
-          <label><input id="teammateHistoryNever" type="checkbox"> Jamais associés cette saison</label>
-          <label><input id="teammateHistoryHideInjured" type="checkbox"> Masquer les coéquipiers blessés</label>
+          <div class="teammate-history-checkboxes">
+            <label><input id="teammateHistoryNever" type="checkbox"> Jamais associés cette saison</label>
+            <label><input id="teammateHistoryHideInjured" type="checkbox"> Masquer les coéquipiers blessés</label>
+          </div>
         </div>
         <p class="muted" id="teammateHistoryStatus" aria-live="polite"></p>
         <ul class="teammate-chart" id="teammateHistoryRows" aria-label="Temps écoulé depuis le dernier match ensemble"></ul>
