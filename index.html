@@ -139,15 +139,14 @@
         <div id="builderResult" class="builder-result"></div>
       </div>
       <details class="card teammate-history">
-        <summary>Duos à privilégier</summary>
-        <p class="muted">Les duos jamais réunis cette saison arrivent en tête, suivis de ceux qui attendent depuis le plus longtemps.</p>
+        <summary>Historique des coéquipiers</summary>
+        <p class="muted">Choisis un joueur de la feuille de match pour voir avec quels autres participants il a joué le moins récemment.</p>
         <div class="teammate-history-filters">
-          <label>Joueur <select id="teammateHistoryPlayer"><option value="">Tous les joueurs</option></select></label>
-          <label><input id="teammateHistoryPresent" type="checkbox"> Joueurs présents uniquement</label>
+          <label>Joueur <select id="teammateHistoryPlayer"></select></label>
         </div>
         <p class="muted" id="teammateHistoryStatus" aria-live="polite"></p>
         <div class="table-wrap"><table aria-label="Dernier match dans la même équipe">
-          <thead><tr><th scope="col">Duo</th><th scope="col">Depuis</th><th scope="col">Dernier match ensemble</th><th scope="col">Matchs ensemble</th></tr></thead>
+          <thead><tr><th scope="col">Coéquipier</th><th scope="col">Depuis</th><th scope="col">Dernier match ensemble</th><th scope="col">Matchs ensemble</th></tr></thead>
           <tbody id="teammateHistoryRows"></tbody>
         </table></div>
       </details>

@@ -412,37 +412,39 @@ function teammateHistory(matches) {
 function renderTeammateHistory() {
   const filter = $('#teammateHistoryPlayer');
   const selected = filter.value;
-  const roster = [...new Set(data.players.map(player => player.name))].sort();
-  filter.innerHTML = '<option value="">Tous les joueurs</option>' +
-    roster.map(name => `<option value="${esc(name)}">${esc(labelForName(name))}</option>`).join('');
-  filter.value = roster.includes(selected) ? selected : '';
   const manual = composeMode === 'manual';
-  const present = new Set(manual ? [...composeManual.A, ...composeManual.B] : composeSheet);
-  const presentOnly = $('#teammateHistoryPresent').checked;
-  const names = roster.filter(name => !presentOnly || present.has(name));
+  const names = [...new Set(manual ? [...composeManual.A, ...composeManual.B] : composeSheet)]
+    .sort((a, b) => labelForName(a).localeCompare(labelForName(b), 'fr'));
+  filter.innerHTML = names.map(name => `<option value="${esc(name)}">${esc(labelForName(name))}</option>`).join('');
+  filter.value = names.includes(selected) ? selected : names[0] || '';
+  filter.disabled = names.length < 2;
+  const status = $('#teammateHistoryStatus');
+  const rows = $('#teammateHistoryRows');
+  rows.closest('.table-wrap').hidden = names.length < 2;
+  if (names.length < 2) {
+    rows.innerHTML = '';
+    status.textContent = manual ? 'Place au moins deux joueurs dans les équipes.' : 'Ajoute au moins deux joueurs à la feuille de match.';
+    return;
+  }
+
+  status.textContent = '';
+  const focus = filter.value;
   const history = teammateHistory(data.matches);
-  const pairs = [];
-  names.forEach((first, index) => {
-    for (const second of names.slice(index + 1)) {
-      if (filter.value && ![first, second].includes(filter.value)) continue;
-      pairs.push({first, second, ...history.get(JSON.stringify([first, second]))});
-    }
-  });
-  pairs.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+  const teammates = names.filter(name => name !== focus).map(name => ({
+    name, ...history.get(JSON.stringify([focus, name].sort()))
+  }));
+  teammates.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
   const dayNumber = date => Date.parse(date + 'T00:00:00Z') / 86400000;
   const currentDay = dayNumber(today());
-  $('#teammateHistoryRows').innerHTML = pairs.map(({first, second, date, count}) => {
+  rows.innerHTML = teammates.map(({name, date, count}) => {
     const days = date ? Math.max(0, currentDay - dayNumber(date)) : null;
     const lastPlayed = date ? new Date(date + 'T12:00:00').toLocaleDateString('fr-FR') : '—';
     const waiting = days === null ? 'Jamais ensemble' : days === 0 ? 'Aujourd’hui' : `Il y a ${days} jour${days > 1 ? 's' : ''}`;
-    const sameTeam = manual && [composeManual.A, composeManual.B].some(team => team.includes(first) && team.includes(second));
-    return `<tr><th scope="row">${esc(labelForName(first))} et ${esc(labelForName(second))}${sameTeam ? '<small>Déjà réunis dans la composition</small>' : ''}</th><td>${waiting}</td><td>${lastPlayed}</td><td>${count ?? 0}</td></tr>`;
+    const sameTeam = manual && [composeManual.A, composeManual.B].some(team => team.includes(focus) && team.includes(name));
+    return `<tr><th scope="row">${esc(labelForName(name))}${sameTeam ? '<small>Dans la même équipe pour ce match</small>' : ''}</th><td>${waiting}</td><td>${lastPlayed}</td><td>${count ?? 0}</td></tr>`;
   }).join('');
-  $('#teammateHistoryStatus').textContent = pairs.length ? `${pairs.length} duo${pairs.length > 1 ? 's' : ''}` :
-    presentOnly && names.length < 2 ? (manual ? 'Place au moins deux joueurs dans les équipes.' : 'Ajoute au moins deux joueurs à la feuille de match.') :
-    'Aucun duo pour cette sélection.';
 }
-$('#teammateHistoryPlayer').onchange = $('#teammateHistoryPresent').onchange = renderTeammateHistory;
+$('#teammateHistoryPlayer').onchange = renderTeammateHistory;
 
 function drawComposer(){if(!$('#composeBench'))return;renderTeammateHistory();let manual=composeMode==='manual';$('#autoSelectionBoard').hidden=manual;$('#autoSelectionBoard').style.display=manual?'none':'';$('#manualSelectionBoard').hidden=!manual;$('#manualSelectionBoard').style.display=manual?'':'none';$('#generateTeamsBtn').textContent=manual?(language==='fr'?'Calculer le pronostic':'Calculate prediction'):tr('generateTeams');$('#composerInstructions').textContent=manual?(language==='fr'?'Glisse les joueurs du banc vers Team A ou Team B, puis calcule le pronostic de ta composition.':'Drag players from the bench to Team A or Team B, then calculate the prediction.'):(language==='fr'?'Place les participants sur la feuille de match, choisis un style, puis laisse le système former les équipes.':'Place participants on the match sheet, choose a style, then let the system build the teams.');if(manual){let bench=data.players.map(p=>p.name).filter(n=>!composeManual.A.includes(n)&&!composeManual.B.includes(n));$('#composeManualBench').innerHTML=$('#composeManualA').innerHTML=$('#composeManualB').innerHTML='';bench.forEach(n=>$('#composeManualBench').append(chip(n,'composeManual','bench')));composeManual.A.forEach(n=>$('#composeManualA').append(chip(n,'composeManual','A')));composeManual.B.forEach(n=>$('#composeManualB').append(chip(n,'composeManual','B')));$('#manualBenchCount').textContent=bench.length;$('#manualTeamACount').textContent=composeManual.A.length;$('#manualTeamBCount').textContent=composeManual.B.length;return}let bench=data.players.map(p=>p.name).filter(n=>!composeSheet.includes(n));$('#composeBench').innerHTML=$('#composeSheet').innerHTML='';bench.forEach(n=>$('#composeBench').append(chip(n,'compose','bench')));composeSheet.forEach(n=>$('#composeSheet').append(chip(n,'compose','sheet')));$('#benchCount').textContent=bench.length;$('#sheetCount').textContent=composeSheet.length}
 function profileCounts(team){let keys=['attaque','milieu','defense','gardien','polyvalent'],counts=Object.fromEntries(keys.map(key=>[key,0]));team.forEach(name=>counts[player(name)?.position||'polyvalent']++);return counts}
