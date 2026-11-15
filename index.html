@@ -133,7 +133,7 @@
           <button class="mode active" data-mode="fair"><b data-i18n="fairMode">Impartial ⚖️</b><small data-i18n="fairHint">Équilibre optimisé</small></button>
           <button class="mode" data-mode="human"><b data-i18n="boldMode">Audacieux 🌶️</b><small data-i18n="boldHint">Deux associations pimentées</small></button>
           <button class="mode" data-mode="random"><b data-i18n="randomMode">Aléatoire 🎲</b><small data-i18n="randomHint">100 % hasard</small></button>
-          <button class="mode" data-mode="rotation"><b>Rotation des coéquipiers 🔄</b><small>Retrouver des coéquipiers de longue date</small></button>
+          <button class="mode" data-mode="rotation"><b>Rotation 🔄</b></button>
           <button class="mode" data-mode="manual"><b data-i18n="manualMode">Mode Manuel ✋</b><small data-i18n="manualHint">Compose les deux équipes</small></button>
         </div>
         <div class="composer-actions"><button class="secondary reset-composer" id="resetComposerBtn" type="button">↺ Reset</button><button class="primary generate" id="generateTeamsBtn" type="button" data-i18n="generateTeams">Générer les équipes</button></div>
@@ -146,10 +146,7 @@
           <label>Joueur <select id="teammateHistoryPlayer"></select></label>
         </div>
         <p class="muted" id="teammateHistoryStatus" aria-live="polite"></p>
-        <div class="table-wrap"><table aria-label="Dernier match dans la même équipe">
-          <thead><tr><th scope="col">Coéquipier</th><th scope="col">Depuis</th><th scope="col">Dernier match ensemble</th><th scope="col">Matchs ensemble</th></tr></thead>
-          <tbody id="teammateHistoryRows"></tbody>
-        </table></div>
+        <ul class="teammate-chart" id="teammateHistoryRows" aria-label="Temps écoulé depuis le dernier match ensemble"></ul>
       </details>
     </section>
 

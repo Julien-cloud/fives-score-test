@@ -420,7 +420,7 @@ function renderTeammateHistory() {
   filter.disabled = names.length < 2;
   const status = $('#teammateHistoryStatus');
   const rows = $('#teammateHistoryRows');
-  rows.closest('.table-wrap').hidden = names.length < 2;
+  rows.hidden = names.length < 2;
   if (names.length < 2) {
     rows.innerHTML = '';
     status.textContent = 'L’historique sera disponible dès que la ligue comptera deux joueurs.';
@@ -436,12 +436,18 @@ function renderTeammateHistory() {
   teammates.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
   const dayNumber = date => Date.parse(date + 'T00:00:00Z') / 86400000;
   const currentDay = dayNumber(today());
+  const maxDays = teammates.reduce((max, {date}) => date ? Math.max(max, currentDay - dayNumber(date)) : max, 1);
   rows.innerHTML = teammates.map(({name, date, count}) => {
     const days = date ? Math.max(0, currentDay - dayNumber(date)) : null;
     const lastPlayed = date ? new Date(date + 'T12:00:00').toLocaleDateString('fr-FR') : '—';
     const waiting = days === null ? 'Jamais ensemble' : days === 0 ? 'Aujourd’hui' : `Il y a ${days} jour${days > 1 ? 's' : ''}`;
     const sameTeam = manual && [composeManual.A, composeManual.B].some(team => team.includes(focus) && team.includes(name));
-    return `<tr><th scope="row">${esc(labelForName(name))}${sameTeam ? '<small>Dans la même équipe pour ce match</small>' : ''}</th><td>${waiting}</td><td>${lastPlayed}</td><td>${count ?? 0}</td></tr>`;
+    return `<li class="teammate-chart-item">
+      <div class="teammate-chart-heading"><strong>${esc(labelForName(name))}</strong><span>${waiting}</span></div>
+      ${days === null ? '' : `<div class="teammate-chart-track" aria-hidden="true"><span style="width:${100 * days / maxDays}%"></span></div>`}
+      <small>${date ? `Dernier match le ${lastPlayed} · ` : ''}${count ?? 0} match${count > 1 ? 's' : ''} ensemble</small>
+      ${sameTeam ? '<small>Dans la même équipe pour ce match</small>' : ''}
+    </li>`;
   }).join('');
 }
 $('#teammateHistoryPlayer').onchange = renderTeammateHistory;
