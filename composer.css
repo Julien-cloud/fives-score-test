@@ -3,3 +3,11 @@
 @media(max-width:820px){.manual-selection-board{grid-template-columns:1fr}.mode-buttons{flex-wrap:wrap}.mode{min-width:calc(50% - 8px)}}
 .composer-actions{display:grid;grid-template-columns:auto 1fr;gap:10px}.composer-actions .generate{width:100%}.reset-composer{padding-inline:20px}@media(max-width:520px){.composer-actions{grid-template-columns:1fr}.reset-composer{order:2}}
 .generated-player-name{display:flex;align-items:center;flex-wrap:wrap;gap:6px}.composer-position{display:inline-flex;align-items:center;border:1px solid color-mix(in srgb,var(--position-color) 45%,transparent);border-radius:999px;background:color-mix(in srgb,var(--position-color) 14%,white);color:var(--position-color);padding:3px 7px;font-size:12px;font-style:normal;font-weight:800;line-height:1}
+
+.teammate-history { margin-top: 18px; }
+.teammate-history summary { cursor: pointer; font-weight: 800; }
+.teammate-history-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 12px 0; }
+.teammate-history-filters label { display: flex; align-items: center; gap: 8px; }
+.teammate-history-filters input[type="checkbox"] { width: auto; margin: 0; }
+.teammate-history th small { display: block; color: var(--muted); }
+.teammate-history .table-wrap { max-height: 24rem; overflow: auto; }
