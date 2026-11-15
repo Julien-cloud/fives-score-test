@@ -6,9 +6,16 @@
 
 .teammate-history { margin-top: 18px; }
 .teammate-history summary { cursor: pointer; font-weight: 800; }
+.teammate-history-player { display: flex; align-items: center; gap: 16px; margin-top: 12px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: var(--white); }
+.teammate-history-player label { display: grid; gap: 6px; flex: 1; min-width: 0; font-weight: 800; }
+.teammate-history-player select { width: 100%; font-size: 1.1rem; }
+.teammate-history-avatar { display: grid; place-items: center; width: clamp(56px, 12vw, 84px); aspect-ratio: 1; overflow: hidden; border: 1px solid var(--line); border-radius: 50%; font-size: 1.6rem; font-weight: 800; }
+.teammate-history-avatar img { width: 100%; height: 100%; object-fit: cover; }
 .teammate-history-filters { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 12px 0; }
 .teammate-history-filters label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .teammate-history-filters input[type="checkbox"] { width: auto; margin: 0; }
+.teammate-history-filters .teammate-history-range { display: grid; flex: 1 1 220px; }
+.teammate-history-range input { width: 100%; margin: 0; accent-color: #2ca678; }
 .teammate-chart { display: grid; gap: 8px; padding: 0; margin: 12px 0 0; list-style: none; }
 .teammate-chart[hidden] { display: none; }
 .teammate-chart-item { display: grid; gap: 6px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }

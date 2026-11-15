@@ -419,6 +419,8 @@ function renderTeammateHistory() {
   filter.innerHTML = names.map(name => `<option value="${esc(name)}">${esc(labelForName(name))}</option>`).join('');
   filter.value = names.includes(selected) ? selected : names[0] || '';
   filter.disabled = names.length < 2;
+  const focus = filter.value;
+  $('#teammateHistoryAvatar').innerHTML = focus ? avatar(roster.get(focus), 'teammate-history-avatar') : '';
   const status = $('#teammateHistoryStatus');
   const rows = $('#teammateHistoryRows');
   rows.hidden = names.length < 2;
@@ -428,10 +430,9 @@ function renderTeammateHistory() {
     return;
   }
 
-  const focus = filter.value;
   const history = teammateHistory(data.matches);
   const position = $('#teammateHistoryPosition').value;
-  const recency = $('#teammateHistoryRecency').value;
+  const neverTogether = $('#teammateHistoryNever').checked;
   const hideInjured = $('#teammateHistoryHideInjured').checked;
   const dayNumber = date => Date.parse(date + 'T00:00:00Z') / 86400000;
   const currentDay = dayNumber(today());
@@ -440,12 +441,19 @@ function renderTeammateHistory() {
   }));
   teammates.sort((a, b) => (a.date || '').localeCompare(b.date || ''));
   const maxDays = teammates.reduce((max, {date}) => date ? Math.max(max, currentDay - dayNumber(date)) : max, 1);
+  const range = $('#teammateHistoryDays');
+  range.max = Math.max(30, maxDays, Number(range.value));
+  range.disabled = neverTogether;
+  const minimumDays = Number(range.value);
+  const rangeText = minimumDays ? `${minimumDays} jour${minimumDays > 1 ? 's' : ''} ou plus` : 'Tous les délais';
+  $('#teammateHistoryDaysValue').textContent = rangeText;
+  range.setAttribute('aria-valuetext', rangeText);
   const visible = teammates.filter(({name, date}) => {
     const teammate = roster.get(name);
     if (hideInjured && teammate.injured) return false;
     if (position && (teammate.position || 'polyvalent') !== position) return false;
-    if (recency === 'never') return !date;
-    if (recency === '30') return Boolean(date && currentDay - dayNumber(date) >= 30);
+    if (neverTogether) return !date;
+    if (minimumDays) return Boolean(date && currentDay - dayNumber(date) >= minimumDays);
     return true;
   });
   rows.hidden = !visible.length;
@@ -466,6 +474,8 @@ function renderTeammateHistory() {
   }).join('');
 }
 $('.teammate-history-filters').onchange = renderTeammateHistory;
+$('#teammateHistoryPlayer').onchange = renderTeammateHistory;
+$('#teammateHistoryDays').oninput = renderTeammateHistory;
 
 function drawComposer(){if(!$('#composeBench'))return;renderTeammateHistory();let manual=composeMode==='manual';$('#autoSelectionBoard').hidden=manual;$('#autoSelectionBoard').style.display=manual?'none':'';$('#manualSelectionBoard').hidden=!manual;$('#manualSelectionBoard').style.display=manual?'':'none';$('#generateTeamsBtn').textContent=manual?(language==='fr'?'Calculer le pronostic':'Calculate prediction'):tr('generateTeams');$('#composerInstructions').textContent=manual?(language==='fr'?'Glisse les joueurs du banc vers Team A ou Team B, puis calcule le pronostic de ta composition.':'Drag players from the bench to Team A or Team B, then calculate the prediction.'):(language==='fr'?'Place les participants sur la feuille de match, choisis un style, puis laisse le système former les équipes.':'Place participants on the match sheet, choose a style, then let the system build the teams.');if(manual){let bench=data.players.map(p=>p.name).filter(n=>!composeManual.A.includes(n)&&!composeManual.B.includes(n));$('#composeManualBench').innerHTML=$('#composeManualA').innerHTML=$('#composeManualB').innerHTML='';bench.forEach(n=>$('#composeManualBench').append(chip(n,'composeManual','bench')));composeManual.A.forEach(n=>$('#composeManualA').append(chip(n,'composeManual','A')));composeManual.B.forEach(n=>$('#composeManualB').append(chip(n,'composeManual','B')));$('#manualBenchCount').textContent=bench.length;$('#manualTeamACount').textContent=composeManual.A.length;$('#manualTeamBCount').textContent=composeManual.B.length;return}let bench=data.players.map(p=>p.name).filter(n=>!composeSheet.includes(n));$('#composeBench').innerHTML=$('#composeSheet').innerHTML='';bench.forEach(n=>$('#composeBench').append(chip(n,'compose','bench')));composeSheet.forEach(n=>$('#composeSheet').append(chip(n,'compose','sheet')));$('#benchCount').textContent=bench.length;$('#sheetCount').textContent=composeSheet.length}
 function profileCounts(team){let keys=['attaque','milieu','defense','gardien','polyvalent'],counts=Object.fromEntries(keys.map(key=>[key,0]));team.forEach(name=>counts[player(name)?.position||'polyvalent']++);return counts}

@@ -142,8 +142,11 @@
       <details class="card teammate-history">
         <summary>Historique des coéquipiers</summary>
         <p class="muted">Choisis un joueur de la ligue pour retrouver ses matchs avec les autres joueurs.</p>
+        <div class="teammate-history-player">
+          <div id="teammateHistoryAvatar"></div>
+          <label>Joueur sélectionné <select id="teammateHistoryPlayer"></select></label>
+        </div>
         <div class="teammate-history-filters">
-          <label>Joueur <select id="teammateHistoryPlayer"></select></label>
           <label>Poste du coéquipier <select id="teammateHistoryPosition">
             <option value="">Tous les postes</option>
             <option value="gardien">Gardien</option>
@@ -152,11 +155,11 @@
             <option value="attaque">Attaquant</option>
             <option value="polyvalent">Polyvalent</option>
           </select></label>
-          <label>Dernier match ensemble <select id="teammateHistoryRecency">
-            <option value="">Toutes les périodes</option>
-            <option value="never">Jamais cette saison</option>
-            <option value="30">Il y a 30 jours ou plus</option>
-          </select></label>
+          <label class="teammate-history-range">
+            <span>Délai minimum · <output id="teammateHistoryDaysValue" for="teammateHistoryDays">Tous les délais</output></span>
+            <input id="teammateHistoryDays" type="range" min="0" max="30" step="1" value="0">
+          </label>
+          <label><input id="teammateHistoryNever" type="checkbox"> Jamais associés cette saison</label>
           <label><input id="teammateHistoryHideInjured" type="checkbox"> Masquer les coéquipiers blessés</label>
         </div>
         <p class="muted" id="teammateHistoryStatus" aria-live="polite"></p>
