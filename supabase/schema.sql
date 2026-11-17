@@ -43,6 +43,7 @@ create table public.participations (
 create table public.app_settings (
   id text primary key default 'global' check (id = 'global'),
   mystery_mode boolean not null default false,
+  composer_for_visitors boolean not null default false,
   updated_at timestamptz not null default now()
 );
 alter table public.players enable row level security;
@@ -65,4 +66,4 @@ create policy "julien gere indices prives joueurs" on public.player_private_indi
 create policy "admin gere matchs" on public.matches for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));
 create policy "admin gere participations" on public.participations for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));
 create policy "admin gere reglages" on public.app_settings for all to authenticated using (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com'])) with check (lower(auth.jwt() ->> 'email') = any(array['juliencannoux@yahoo.com','juliiengravity350@gmail.com','rayanrahou51@gmail.com','lucas.nadreau@gmail.com']));
-insert into public.app_settings (id, mystery_mode) values ('global', false);
+insert into public.app_settings (id, mystery_mode, composer_for_visitors) values ('global', false, false);
